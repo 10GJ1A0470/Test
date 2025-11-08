@@ -1,14 +1,15 @@
-# -------------------------------------------------------------------
-# Microsoft Edge WebDriver setup
-# -------------------------------------------------------------------
-options = EdgeOptions()
-options.add_argument("--inprivate")
-options.add_argument("--start-maximized")
-options.add_argument("--log-level=3")
-
-# If you have msedgedriver in PATH, this is enough:
-driver = webdriver.Edge(options=options)
-
-# If not in PATH, use:
-# service = EdgeService(executable_path=r"C:\path\to\msedgedriver.exe")
-# driver = webdriver.Edge(service=service, options=options)
+import os
+import shutil
+import pandas as pd
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.edge.service import Service as EdgeService
+from selenium.webdriver.edge.options import Options as EdgeOptions
+from pathlib import Path
+import time
+import sys
+import zipfile
+import logging
