@@ -1,24 +1,14 @@
-C:\Windows\system32>python "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py"
 Traceback (most recent call last):
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\driver_finder.py", line 67, in _binary_paths
-    output = SeleniumManager().binary_paths(self._to_args())
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\selenium_manager.py", line 54, in binary_paths
-    return self._run(args)
-           ~~~~~~~~~^^^^^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\selenium_manager.py", line 128, in _run
-    raise WebDriverException(
-        f"Unsuccessful command executed: {command}; code: {completed_proc.returncode}\n{result}\n{stderr}"
-    )
-selenium.common.exceptions.WebDriverException: Message: Unsuccessful command executed: C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe --browser MicrosoftEdge --language-binding python --output json; code: 65
-{'code': 65, 'message': 'error sending request for url (https://msedgedriver.azureedge.net/LATEST_RELEASE_142_WINDOWS)', 'driver_path': '', 'browser_path': ''}
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 849, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+TimeoutError: timed out
 
-
-
-The above exception was the direct cause of the following exception:
+During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py", line 46, in <module>
-    driver = webdriver.Edge(options=options)
+  File "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py", line 48, in <module>
+    driver = webdriver.Edge(service=service, options=options)
   File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\edge\webdriver.py", line 47, in __init__
     super().__init__(
     ~~~~~~~~~~~~~~~~^
@@ -29,13 +19,16 @@ Traceback (most recent call last):
         ^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 53, in __init__
-    if finder.get_browser_path():
-       ~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\driver_finder.py", line 47, in get_browser_path
-    return self._binary_paths()["browser_path"]
-           ~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\driver_finder.py", line 78, in _binary_paths
-    raise NoSuchDriverException(msg) from err
-selenium.common.exceptions.NoSuchDriverException: Message: Unable to obtain driver for MicrosoftEdge; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors/driver_location
-
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 58, in __init__
+    self.service.start()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\service.py", line 107, in start
+    if self.is_connectable():
+       ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\service.py", line 124, in is_connectable
+    return utils.is_connectable(self.port)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\utils.py", line 98, in is_connectable
+    socket_ = socket.create_connection((host, port), 1)
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 856, in create_connection
+    exceptions.clear()  # raise only the last error
