@@ -1,38 +1,20 @@
-DevTools listening on ws://127.0.0.1:56360/devtools/browser/522f9e1d-8465-46cc-b43d-f7869d968181
-2025-11-08 02:09:01,356 - INFO - Accessing FTP: https://transferus.omp.com/url/hjvwkxrzkywitc34
-Traceback (most recent call last):
-  File "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py", line 433, in <module>
-    access_ftp(driver, input_value)
-    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
-  File "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py", line 62, in access_ftp
-    driver.get(url)
-    ~~~~~~~~~~^^^^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 472, in get
-    self.execute(Command.GET, {"url": url})
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 447, in execute
-    self.error_handler.check_response(response)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
-    raise exception_class(message, screen, stacktrace)
-selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
-  (Session info: MicrosoftEdge=142.0.3595.65)
+C:\Windows\system32>python "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py"
+
+DevTools listening on ws://127.0.0.1:60885/devtools/browser/4a91e130-0c12-47a4-83e1-32f56e9cb3b0
+2025-11-08 07:10:38,535 - INFO - Accessing FTP: https://transfereu.omp.com/url/zybrceztgp5xussp
+2025-11-08 07:10:42,928 - INFO - Password entered, waiting for login response...
+2025-11-08 07:10:47,938 - INFO - FTP Login Successful!
+2025-11-08 07:10:52,940 - INFO - Opening PAK File Path: https://transfereu.omp.com/ui/core/index.html?mode=public&secure=0&referrer=/url/zybrceztgp5xussp#expl-tabl./SHARED/lstefanowski/9FYzgfhOcGHv3sGF/to_omp/PAK%20File/ATOM
+2025-11-08 07:10:55,228 - INFO - Successfully opened PAK file path.
+2025-11-08 07:11:10,374 - ERROR - Unexpected Error in FTP Login: Message:
 Stacktrace:
 Symbols not available. Dumping unresolved backtrace:
         0x7ff6974ea785
         0x7ff6974ea7e4
         0x7ff69769c5c8
-        0x7ff69725af21
-        0x7ff6972501d7
-        0x7ff6972517a1
-        0x7ff6972505de
-        0x7ff697250035
-        0x7ff69724fddf
-        0x7ff69724df81
-        0x7ff69724e58c
-        0x7ff6972608a0
-        0x7ff6972dec5e
-        0x7ff6972c3c8a
+        0x7ff6972a40ce
+        0x7ff6972a431b
+        0x7ff6972e0777
         0x7ff69729b3d5
         0x7ff6972de6f2
         0x7ff69729a8aa
@@ -49,27 +31,4 @@ Symbols not available. Dumping unresolved backtrace:
         0x7ffb868f7ac4
         0x7ffb888aa8c1
 
-
-C:\Windows\system32>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Stopping script due to unexpected FTP login error.
