@@ -1,5 +1,3 @@
-C:\Windows\system32>python "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py"
-
 DevTools listening on ws://127.0.0.1:60885/devtools/browser/4a91e130-0c12-47a4-83e1-32f56e9cb3b0
 2025-11-08 07:10:38,535 - INFO - Accessing FTP: https://transfereu.omp.com/url/zybrceztgp5xussp
 2025-11-08 07:10:42,928 - INFO - Password entered, waiting for login response...
