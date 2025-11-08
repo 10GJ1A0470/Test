@@ -1,34 +1,75 @@
+DevTools listening on ws://127.0.0.1:56360/devtools/browser/522f9e1d-8465-46cc-b43d-f7869d968181
+2025-11-08 02:09:01,356 - INFO - Accessing FTP: https://transferus.omp.com/url/hjvwkxrzkywitc34
 Traceback (most recent call last):
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 849, in create_connection
-    sock.connect(sa)
-    ~~~~~~~~~~~~^^^^
-TimeoutError: timed out
+  File "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py", line 433, in <module>
+    access_ftp(driver, input_value)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py", line 62, in access_ftp
+    driver.get(url)
+    ~~~~~~~~~~^^^^^
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 472, in get
+    self.execute(Command.GET, {"url": url})
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 447, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: MicrosoftEdge=142.0.3595.65)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+        0x7ff6974ea785
+        0x7ff6974ea7e4
+        0x7ff69769c5c8
+        0x7ff69725af21
+        0x7ff6972501d7
+        0x7ff6972517a1
+        0x7ff6972505de
+        0x7ff697250035
+        0x7ff69724fddf
+        0x7ff69724df81
+        0x7ff69724e58c
+        0x7ff6972608a0
+        0x7ff6972dec5e
+        0x7ff6972c3c8a
+        0x7ff69729b3d5
+        0x7ff6972de6f2
+        0x7ff69729a8aa
+        0x7ff697299bd1
+        0x7ff69729a6d3
+        0x7ff6973581f4
+        0x7ff697354717
+        0x7ff6975173e5
+        0x7ff697505841
+        0x7ff69750dce9
+        0x7ff6974f1cd4
+        0x7ff6974f1e23
+        0x7ff6974dfb56
+        0x7ffb868f7ac4
+        0x7ffb888aa8c1
 
-During handling of the above exception, another exception occurred:
 
-Traceback (most recent call last):
-  File "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py", line 48, in <module>
-    driver = webdriver.Edge(service=service, options=options)
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\edge\webdriver.py", line 47, in __init__
-    super().__init__(
-    ~~~~~~~~~~~~~~~~^
-        browser_name=DesiredCapabilities.EDGE["browserName"],
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<3 lines>...
-        keep_alive=keep_alive,
-        ^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 58, in __init__
-    self.service.start()
-    ~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\service.py", line 107, in start
-    if self.is_connectable():
-       ~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\service.py", line 124, in is_connectable
-    return utils.is_connectable(self.port)
-           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\utils.py", line 98, in is_connectable
-    socket_ = socket.create_connection((host, port), 1)
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 856, in create_connection
-    exceptions.clear()  # raise only the last error
+C:\Windows\system32>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
