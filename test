@@ -1,47 +1,42 @@
-def download_PAK_file(driver, file_name):
-    logging.info(f" Searching for file: {file_name} to download...")
+C:\Windows\system32>python "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py"
+[844:12032:1110/063912.251:ERROR:components\optimization_guide\core\model_execution\performance_class.cc:62] Edge LLM: Not supported on non Desktop SKU
 
-    try:
-        # Wait for the file name element
-        file_element = WebDriverWait(driver, 25).until(
-            EC.presence_of_element_located(
-                (By.XPATH, f"//span[contains(@aria-labelledby, 'genfilename') and text()='{file_name}']")
-            )
-        )
-        driver.execute_script("arguments[0].scrollIntoView(true);", file_element)
-        time.sleep(1)
-        driver.execute_script("arguments[0].click();", file_element)
-        logging.info(f" File '{file_name}' selected, waiting for download icon...")
+DevTools listening on ws://127.0.0.1:61054/devtools/browser/e66b93c7-0e0f-4642-8532-0eec5ecfdee2
+[844:12032:1110/063912.693:ERROR:components\edge_auth\edge_auth_errors.cc:540] EDGE_IDENTITY: Get Default OS Account failed: Error: Primary Error: kImplicitSignInFailure, Secondary Error: kAccountProviderFetchError, Platform error: -805306355, hex:d000000d, Error string: [empty]
 
-        # Wait for the download icon to appear
-        download_button = WebDriverWait(driver, 20).until(
-            EC.element_to_be_clickable(
-                (By.XPATH, f"//span[text()='{file_name}']/ancestor::tr//i[contains(@class, 'fa-download')]")
-            )
-        )
+[11128:24424:1110/063915.024:ERROR:net\socket\ssl_client_socket_impl.cc:930] handshake failed; returned -1, SSL error code 1, net_error -101
+[11128:24424:1110/063915.040:ERROR:net\socket\ssl_client_socket_impl.cc:930] handshake failed; returned -1, SSL error code 1, net_error -101
+2025-11-10 06:39:18,364 - INFO - Accessing FTP: https://transfereu.omp.com/url/zybrceztgp5xussp
+[844:12032:1110/063919.118:ERROR:chrome\browser\task_manager\providers\fallback_task_provider.cc:126] Every renderer should have at least one task provided by a primary task provider. If a "Renderer" fallback task is shown, it is a bug. If you have repro steps, please file a new bug and tag it as a dependency of crbug.com/739782.
+2025-11-10 06:39:22,948 - INFO - Password entered, waiting for login response...
+2025-11-10 06:39:27,957 - INFO - FTP Login Successful!
+2025-11-10 06:39:32,959 - INFO - Opening PAK File Path: https://transfereu.omp.com/ui/core/index.html?mode=public&secure=0&referrer=/url/zybrceztgp5xussp#expl-tabl./SHARED/lstefanowski/9FYzgfhOcGHv3sGF/to_omp/PAK%20File/Testing
+2025-11-10 06:39:35,246 - INFO - Successfully opened PAK file path.
+2025-11-10 06:39:40,250 - INFO -  Searching for file: ompplus_06_14_032_616_1.dsp.zip to download...
+2025-11-10 06:39:41,288 - INFO -  File 'ompplus_06_14_032_616_1.dsp.zip' selected, waiting for download icon...
+2025-11-10 06:40:01,607 - ERROR - Error: Unable to download file 'ompplus_06_14_032_616_1.dsp.zip' - Message:
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+        0x7ff6974ea785
+        0x7ff6974ea7e4
+        0x7ff69769c5c8
+        0x7ff6972a40ce
+        0x7ff6972a431b
+        0x7ff6972e0777
+        0x7ff69729b3d5
+        0x7ff6972de6f2
+        0x7ff69729a8aa
+        0x7ff697299bd1
+        0x7ff69729a6d3
+        0x7ff6973581f4
+        0x7ff697354717
+        0x7ff6975173e5
+        0x7ff697505841
+        0x7ff69750dce9
+        0x7ff6974f1cd4
+        0x7ff6974f1e23
+        0x7ff6974dfb56
+        0x7ffb868f7ac4
+        0x7ffb888aa8c1
 
-        # Ensure download folder permissions
-        driver.execute_script("arguments[0].scrollIntoView(true);", download_button)
-        time.sleep(1)
-
-        driver.execute_script("arguments[0].click();", download_button)
-        logging.info(f" Download initiated for file: '{file_name}'")
-
-        # Wait for the file to appear in Downloads
-        download_path = get_download_path()
-        download_file_path = os.path.join(download_path, file_name)
-
-        wait_time = 0
-        while wait_time < 120:  # wait up to 2 minutes
-            if os.path.exists(download_file_path):
-                logging.info(f"Download confirmed: '{file_name}' found in {download_path}")
-                return download_file_path
-            time.sleep(5)
-            wait_time += 5
-
-        logging.info(f"Download failed: '{file_name}' not found in {download_path} after waiting.")
-        return None
-
-    except Exception as e:
-        logging.error(f"Error: Unable to download file '{file_name}' - {e}")
-        return None
+2025-11-10 06:40:01,608 - INFO - download failed, file not available
