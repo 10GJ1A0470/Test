@@ -1,11 +1,12 @@
-DevTools listening on ws://127.0.0.1:64277/devtools/browser/2946daa0-46aa-40f3-8f23-aa515554106b
-2025-11-10 06:25:34,753 - INFO - Accessing FTP: https://transfereu.omp.com/url/zybrceztgp5xussp
-2025-11-10 06:25:39,199 - INFO - Password entered, waiting for login response...
-2025-11-10 06:25:44,207 - INFO - FTP Login Successful!
-2025-11-10 06:25:49,209 - INFO - Opening PAK File Path: https://transfereu.omp.com/ui/core/index.html?mode=public&secure=0&referrer=/url/zybrceztgp5xussp#expl-tabl./SHARED/lstefanowski/9FYzgfhOcGHv3sGF/to_omp/PAK%20File/Testing
-2025-11-10 06:25:51,486 - INFO - Successfully opened PAK file path.
-2025-11-10 06:25:56,493 - INFO -  Searching for file: ompplus_06_14_032_616_1.dsp.zip to download...
-2025-11-10 06:25:56,525 - INFO -  File 'ompplus_06_14_032_616_1.dsp.zip' selected, opening preview...
-2025-11-10 06:26:06,809 - INFO -  Error: Unable to download file 'ompplus_06_14_032_616_1.dsp.zip' - Message:
-
-Unable to Download file check filename
+# --- Edge download preferences ---
+prefs = {
+    "download.default_directory": r"C:\PAK_Files",  # <-- change if needed
+    "download.prompt_for_download": False,
+    "download.directory_upgrade": True,
+    "safebrowsing.enabled": True,
+    "profile.default_content_setting_values.automatic_downloads": 1
+}
+options.add_experimental_option("prefs", prefs)
+options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_argument("--start-maximized")
+options.add_argument("--inprivate")
