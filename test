@@ -1,32 +1,11 @@
-DevTools listening on ws://127.0.0.1:60885/devtools/browser/4a91e130-0c12-47a4-83e1-32f56e9cb3b0
-2025-11-08 07:10:38,535 - INFO - Accessing FTP: https://transfereu.omp.com/url/zybrceztgp5xussp
-2025-11-08 07:10:42,928 - INFO - Password entered, waiting for login response...
-2025-11-08 07:10:47,938 - INFO - FTP Login Successful!
-2025-11-08 07:10:52,940 - INFO - Opening PAK File Path: https://transfereu.omp.com/ui/core/index.html?mode=public&secure=0&referrer=/url/zybrceztgp5xussp#expl-tabl./SHARED/lstefanowski/9FYzgfhOcGHv3sGF/to_omp/PAK%20File/ATOM
-2025-11-08 07:10:55,228 - INFO - Successfully opened PAK file path.
-2025-11-08 07:11:10,374 - ERROR - Unexpected Error in FTP Login: Message:
-Stacktrace:
-Symbols not available. Dumping unresolved backtrace:
-        0x7ff6974ea785
-        0x7ff6974ea7e4
-        0x7ff69769c5c8
-        0x7ff6972a40ce
-        0x7ff6972a431b
-        0x7ff6972e0777
-        0x7ff69729b3d5
-        0x7ff6972de6f2
-        0x7ff69729a8aa
-        0x7ff697299bd1
-        0x7ff69729a6d3
-        0x7ff6973581f4
-        0x7ff697354717
-        0x7ff6975173e5
-        0x7ff697505841
-        0x7ff69750dce9
-        0x7ff6974f1cd4
-        0x7ff6974f1e23
-        0x7ff6974dfb56
-        0x7ffb868f7ac4
-        0x7ffb888aa8c1
+DevTools listening on ws://127.0.0.1:64277/devtools/browser/2946daa0-46aa-40f3-8f23-aa515554106b
+2025-11-10 06:25:34,753 - INFO - Accessing FTP: https://transfereu.omp.com/url/zybrceztgp5xussp
+2025-11-10 06:25:39,199 - INFO - Password entered, waiting for login response...
+2025-11-10 06:25:44,207 - INFO - FTP Login Successful!
+2025-11-10 06:25:49,209 - INFO - Opening PAK File Path: https://transfereu.omp.com/ui/core/index.html?mode=public&secure=0&referrer=/url/zybrceztgp5xussp#expl-tabl./SHARED/lstefanowski/9FYzgfhOcGHv3sGF/to_omp/PAK%20File/Testing
+2025-11-10 06:25:51,486 - INFO - Successfully opened PAK file path.
+2025-11-10 06:25:56,493 - INFO -  Searching for file: ompplus_06_14_032_616_1.dsp.zip to download...
+2025-11-10 06:25:56,525 - INFO -  File 'ompplus_06_14_032_616_1.dsp.zip' selected, opening preview...
+2025-11-10 06:26:06,809 - INFO -  Error: Unable to download file 'ompplus_06_14_032_616_1.dsp.zip' - Message:
 
-Stopping script due to unexpected FTP login error.
+Unable to Download file check filename
