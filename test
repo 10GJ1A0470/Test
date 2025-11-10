@@ -1,12 +1,14 @@
-# --- Edge download preferences ---
+# --- Configure Microsoft Edge options ---
+options = EdgeOptions()
+options.add_argument("--start-maximized")
+options.add_argument("--inprivate")
+options.add_argument("--disable-blink-features=AutomationControlled")
+
 prefs = {
-    "download.default_directory": r"C:\PAK_Files",  # <-- change if needed
+    "download.default_directory": r"C:\PAK_Files",  # change to your path
     "download.prompt_for_download": False,
     "download.directory_upgrade": True,
     "safebrowsing.enabled": True,
     "profile.default_content_setting_values.automatic_downloads": 1
 }
 options.add_experimental_option("prefs", prefs)
-options.add_argument("--disable-blink-features=AutomationControlled")
-options.add_argument("--start-maximized")
-options.add_argument("--inprivate")
