@@ -1,35 +1,43 @@
-# ------------------------------------------------------------
-# IMPROVED DOWNLOAD FUNCTION
-# ------------------------------------------------------------
 def download_PAK_file(driver, file_name):
     logging.info(f" Searching for file: {file_name} to download...")
+
     try:
+        # Step 1: Locate and click file row
         file_element = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located(
+            EC.element_to_be_clickable(
                 (By.XPATH, f"//span[contains(@aria-labelledby, 'genfilename') and normalize-space(text())='{file_name}']")
             )
         )
         driver.execute_script("arguments[0].scrollIntoView(true);", file_element)
         time.sleep(1)
         driver.execute_script("arguments[0].click();", file_element)
-        logging.info(f" File '{file_name}' selected, waiting for download icon...")
+        logging.info(f" File '{file_name}' selected, opening preview window...")
 
-        # Locate the download icon associated with that file row
-        download_icon_xpath = f"//span[normalize-space(text())='{file_name}']/ancestor::tr//i[contains(@class,'fa-download')]"
-        download_button = WebDriverWait(driver, 20).until(
-            EC.element_to_be_clickable((By.XPATH, download_icon_xpath))
-        )
-
-        # Try a JavaScript click first, fallback to ActionChains
+        # Step 2: Wait for preview panel or iframe to load
+        time.sleep(5)
         try:
-            driver.execute_script("arguments[0].click();", download_button)
-        except:
-            from selenium.webdriver.common.action_chains import ActionChains
-            ActionChains(driver).move_to_element(download_button).click().perform()
+            preview_panel = WebDriverWait(driver, 15).until(
+                EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'file-preview') or contains(@class,'core-file-preview')]"))
+            )
+            logging.info(" Preview panel loaded.")
+        except TimeoutException:
+            logging.warning(" Preview panel not detected, continuing anyway...")
 
-        logging.info(f" Download click triggered for file: '{file_name}'")
+        # Step 3: Locate and click download button inside preview
+        logging.info(" Looking for actual download button in preview...")
+        try:
+            download_btn = WebDriverWait(driver, 15).until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[contains(@aria-label, 'Download') or contains(@title, 'Download') or i[contains(@class,'fa-download')]]")
+                )
+            )
+            driver.execute_script("arguments[0].click();", download_btn)
+            logging.info(f" Clicked actual download button for '{file_name}'")
+        except TimeoutException:
+            logging.error(" Could not find download button inside preview window.")
+            return None
 
-        # Wait for file to appear in Downloads
+        # Step 4: Wait for file to appear in Downloads folder
         download_path = get_download_path()
         file_path = os.path.join(download_path, file_name)
         logging.info(f" Waiting for '{file_name}' to appear in {download_path}...")
@@ -43,8 +51,8 @@ def download_PAK_file(driver, file_name):
             wait_time += 5
 
         logging.error(f"Download timeout: '{file_name}' not found after 120s.")
-        sys.exit()
+        return None
 
     except Exception as e:
         logging.error(f"Error: Unable to download file '{file_name}' - {e}")
-        sys.exit()
+        return None
