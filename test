@@ -1,30 +1,50 @@
-# ------------------------------------------------------------
-# EDGE DRIVER SETUP
-# ------------------------------------------------------------
-options = EdgeOptions()
-options.add_argument("--inprivate")
-options.add_argument("--start-maximized")
-options.add_argument("--disable-blink-features=AutomationControlled")
+C:\Windows\system32>python "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py"
+[22736:24420:1110/065329.815:ERROR:components\optimization_guide\core\model_execution\performance_class.cc:62] Edge LLM: Not supported on non Desktop SKU
 
-prefs = {
-    "download.default_directory": str(Path.home() / "Downloads"),
-    "download.prompt_for_download": False,
-    "download.directory_upgrade": True,
-    "safebrowsing.enabled": True,
-    "profile.default_content_setting_values.automatic_downloads": 1
-}
-options.add_experimental_option("prefs", prefs)
+DevTools listening on ws://127.0.0.1:62601/devtools/browser/a7d69c23-36ae-4b76-8cf0-8485bfd0fce7
+[22736:24420:1110/065330.209:ERROR:components\edge_auth\edge_auth_errors.cc:540] EDGE_IDENTITY: Get Default OS Account failed: Error: Primary Error: kImplicitSignInFailure, Secondary Error: kAccountProviderFetchError, Platform error: -805306355, hex:d000000d, Error string: [empty]
 
-service = EdgeService(executable_path=r"C:\Drivers\msedgedriver.exe")
-driver = webdriver.Edge(service=service, options=options)
-time.sleep(5)
+[21068:5780:1110/065332.486:ERROR:net\socket\ssl_client_socket_impl.cc:930] handshake failed; returned -1, SSL error code 1, net_error -101
+[21068:5780:1110/065332.486:ERROR:net\socket\ssl_client_socket_impl.cc:930] handshake failed; returned -1, SSL error code 1, net_error -101
+2025-11-10 06:53:35,850 - INFO - Edge configured to allow automatic downloads.
+2025-11-10 06:53:35,852 - INFO - Accessing FTP: https://transfereu.omp.com/url/zybrceztgp5xussp
+2025-11-10 06:53:40,304 - INFO - Password entered, waiting for login response...
+2025-11-10 06:53:45,312 - INFO - FTP Login Successful!
+2025-11-10 06:53:50,314 - INFO - Opening PAK File Path: https://transfereu.omp.com/ui/core/index.html?mode=public&secure=0&referrer=/url/zybrceztgp5xussp#expl-tabl./SHARED/lstefanowski/9FYzgfhOcGHv3sGF/to_omp/PAK%20File/Testing
+2025-11-10 06:53:52,601 - INFO - Successfully opened PAK file path.
+2025-11-10 06:53:57,606 - INFO -  Searching for file: ompplus_06_14_032_616_1.dsp.zip to download...
+2025-11-10 06:53:58,645 - INFO -  File 'ompplus_06_14_032_616_1.dsp.zip' selected, waiting for download icon...
+2025-11-10 06:54:18,942 - ERROR - Error: Unable to download file 'ompplus_06_14_032_616_1.dsp.zip' - Message:
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+        0x7ff6974ea785
+        0x7ff6974ea7e4
+        0x7ff69769c5c8
+        0x7ff6972a40ce
+        0x7ff6972a431b
+        0x7ff6972e0777
+        0x7ff69729b3d5
+        0x7ff6972de6f2
+        0x7ff69729a8aa
+        0x7ff697299bd1
+        0x7ff69729a6d3
+        0x7ff6973581f4
+        0x7ff697354717
+        0x7ff6975173e5
+        0x7ff697505841
+        0x7ff69750dce9
+        0x7ff6974f1cd4
+        0x7ff6974f1e23
+        0x7ff6974dfb56
+        0x7ffb868f7ac4
+        0x7ffb888aa8c1
 
-# --- Allow automatic downloads via DevTools ---
-try:
-    driver.execute_cdp_cmd("Page.setDownloadBehavior", {
-        "behavior": "allow",
-        "downloadPath": str(Path.home() / "Downloads")
-    })
-    logging.info("Edge configured to allow automatic downloads.")
-except Exception as e:
-    logging.warning(f"Could not configure Edge download behavior: {e}")
+2025-11-10 06:54:18,945 - INFO - download failed, file not available
+2025-11-10 06:54:18,949 - INFO -  No file available to transfer.
+Traceback (most recent call last):
+  File "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment latest_Edge.py", line 526, in <module>
+    if not downloaded_file_name or not transferred_file_path:
+                                       ^^^^^^^^^^^^^^^^^^^^^
+NameError: name 'transferred_file_path' is not defined
+
+C:\Windows\system32>
