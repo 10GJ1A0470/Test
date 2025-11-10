@@ -1,6 +1,6 @@
 def download_PAK_file(driver, file_name):
     logging.info(f" Searching for file: {file_name} to download...")
-    
+
     try:
         file_element = WebDriverWait(driver, 20).until(
             EC.presence_of_element_located(
@@ -10,14 +10,14 @@ def download_PAK_file(driver, file_name):
         driver.execute_script("arguments[0].click();", file_element)
         logging.info(f" File '{file_name}' selected, opening preview...")
 
-        # Wait for the file preview to load
+        # Wait for preview panel to load fully
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//i[contains(@class, 'fa-download')]")
-        ))
+            EC.presence_of_element_located((By.XPATH, "//a[contains(@class, 'btn btn-primary')]"))
+        )
 
         # Click the actual Download button
         download_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, f"//span[text()='{file_name}']//following::i[contains(@class, 'fa-download')][1]"))
+            EC.element_to_be_clickable((By.XPATH, "//a[contains(@class, 'btn btn-primary') and contains(., 'Download File')]"))
         )
         driver.execute_script("arguments[0].click();", download_button)
         logging.info(f" Download initiated for file: '{file_name}'")
@@ -30,13 +30,13 @@ def download_PAK_file(driver, file_name):
         while timeout > 0:
             if os.path.exists(download_file_path):
                 logging.info(f" Download confirmed: '{file_name}' is in {download_path}")
-                return download_file_path  # Returning the file path
-            time.sleep(30)
+                return download_file_path
+            time.sleep(2)
             timeout -= 1
 
-        logging.info(f" Download failed: '{file_name}' not found in {download_path} after waiting.")
+        logging.error(f" Download failed: '{file_name}' not found in {download_path} after waiting.")
         return None
 
     except Exception as e:
-        logging.info(f" Error: Unable to download file '{file_name}' - {e}")
-        sys.exit("Unable to Download file check filename")
+        logging.error(f" Error: Unable to download file '{file_name}' - {e}")
+        sys.exit("Unable to Download file, check filename or element selector.")
