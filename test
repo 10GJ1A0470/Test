@@ -1,55 +1,42 @@
 def download_PAK_file(driver, file_name):
-    logging.info(f"Searching for file: {file_name} to download...")
-
+    logging.info(f" Searching for file: {file_name} to download...")
+    
     try:
-        # Locate and click the file to open its preview
         file_element = WebDriverWait(driver, 20).until(
-            EC.element_to_be_clickable(
-                (By.XPATH, f"//span[contains(@aria-labelledby,'genfilename') and normalize-space(text())='{file_name}']")
-            )
-        )
-        driver.execute_script("arguments[0].scrollIntoView(true);", file_element)
-        time.sleep(1)
-        driver.execute_script("arguments[0].click();", file_element)
-        logging.info(f"File '{file_name}' clicked to open preview...")
-
-        # Wait for preview to appear
-        WebDriverWait(driver, 20).until(
             EC.presence_of_element_located(
-                (By.XPATH, "//div[contains(@class,'file-preview') or contains(@id,'preview')]")
+                (By.XPATH, f"//span[@role='gridcell' and @aria-labelledby='genfilename' and text()='{file_name}']")
             )
         )
-        logging.info("Preview panel loaded.")
+        driver.execute_script("arguments[0].click();", file_element)
+        logging.info(f" File '{file_name}' selected, opening preview...")
 
-        # Find the real download button inside the preview (not folder-level)
-        download_button = WebDriverWait(driver, 20).until(
-            EC.element_to_be_clickable((
-                By.XPATH,
-                "//button[.//i[contains(@class,'fa-download')] and not(ancestor::div[contains(@class,'toolbar-folder')])]"
-            ))
+        # Wait for the file preview to load
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//i[contains(@class, 'fa-download')]")
+        ))
+
+        # Click the actual Download button
+        download_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, f"//span[text()='{file_name}']//following::i[contains(@class, 'fa-download')][1]"))
         )
-
-        driver.execute_script("arguments[0].scrollIntoView(true);", download_button)
-        time.sleep(1)
         driver.execute_script("arguments[0].click();", download_button)
-        logging.info(f"Actual preview download clicked for '{file_name}'")
+        logging.info(f" Download initiated for file: '{file_name}'")
 
-        # Wait for file to appear in Downloads folder
-        download_dir = get_download_path()
-        expected_file_path = os.path.join(download_dir, file_name)
-        logging.info(f"Waiting for '{file_name}' in {download_dir}...")
+        # Wait and confirm file is downloaded
+        download_path = get_download_path()
+        download_file_path = os.path.join(download_path, file_name)
+        timeout = 30
 
-        wait_time = 0
-        while wait_time < 120:
-            if os.path.exists(expected_file_path):
-                logging.info(f"Download successful: {expected_file_path}")
-                return expected_file_path
-            time.sleep(5)
-            wait_time += 5
+        while timeout > 0:
+            if os.path.exists(download_file_path):
+                logging.info(f" Download confirmed: '{file_name}' is in {download_path}")
+                return download_file_path  # Returning the file path
+            time.sleep(30)
+            timeout -= 1
 
-        logging.error(f"File '{file_name}' not found after waiting 120 seconds.")
+        logging.info(f" Download failed: '{file_name}' not found in {download_path} after waiting.")
         return None
 
     except Exception as e:
-        logging.error(f"Error downloading '{file_name}': {str(e)}")
-        return None
+        logging.info(f" Error: Unable to download file '{file_name}' - {e}")
+        sys.exit("Unable to Download file check filename")
