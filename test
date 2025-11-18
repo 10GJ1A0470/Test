@@ -47,18 +47,15 @@ function Test-IsIPAddress {
 
 function Normalize-MachineName {
     param([string]$Raw)
-    # Strip DOMAIN\ if present
     $hostPart = $Raw -replace '^.*\\',''
 
-    # If it's an IP, return as-is
     if (Test-IsIPAddress $hostPart) { return $hostPart }
 
-    # If it already looks like FQDN (has a dot), return it
     if ($hostPart -match '\.') { return $hostPart }
 
-    # Try to resolve to FQDN
     try {
-        $dns = Resolve-DnsName -Name $hostPart -ErrorAction Stop | Where-Object { $_.QueryType -eq 'A' -or $_.QueryType -eq 'CNAME' }
+        $dns = Resolve-DnsName -Name $hostPart -ErrorAction Stop | 
+               Where-Object { $_.QueryType -eq 'A' -or $_.QueryType -eq 'CNAME' }
         $fqdn = ($dns | Select-Object -First 1).Name
         if ($fqdn) { return $fqdn }
     } catch {
@@ -75,7 +72,6 @@ function New-TargetCimSession {
 
     $isIP = Test-IsIPAddress $ComputerName
 
-    # Prefer WinRM (WsMan) if not using IP (Kerberos works with hostnames)
     if (-not $isIP) {
         try {
             $wsOpt = New-CimSessionOption -Protocol Wsman
@@ -93,7 +89,6 @@ function New-TargetCimSession {
         Write-Log ("Target '{0}' is an IP. Skipping WinRM/Kerberos to avoid TrustedHosts prompts." -f $ComputerName) "DEBUG" "Yellow"
     }
 
-    # Fall back to DCOM
     try {
         $dcOpt = New-CimSessionOption -Protocol Dcom
         if ($Cred) {
@@ -149,7 +144,6 @@ Write-Log ("Host Machine: {0}" -f $env:COMPUTERNAME) "DEBUG" "Cyan"
 Write-Log ("Host OSUSER : {0}" -f $env:USERNAME)     "DEBUG" "Cyan"
 Write-Log ("DryRun Mode : {0}" -f $DryRun)           "DEBUG" "Cyan"
 
-# Collections and processed tracker
 $Killed = @()
 $WouldHaveKilled = @()
 $ProcessedKeys = @{}
@@ -158,11 +152,11 @@ $ProcessedKeys = @{}
 # Main loop
 # ==========================================================
 foreach ($entry in $entries) {
+
     $schematicInput = $entry.SCHEMATIC
     $osuser         = $entry.OSUSER
     $machine        = $entry.MACHINE
 
-    # Normalize schematic for matching (remove _UTL suffix if exists)
     $schematicBase = $schematicInput -replace '_UTL$',''
     $schemRegex    = [regex]::Escape($schematicBase)
 
@@ -172,6 +166,8 @@ foreach ($entry in $entries) {
     Write-Log ("Target SCHEMATIC  : {0}" -f $schematicInput) "DEBUG" "Cyan"
 
     $sess = $null
+    $matchFound = $false   # <-- NEW FLAG
+
     try {
         $sess = New-TargetCimSession -ComputerName $machine -Cred $Credential
         Write-Log ("Querying processes on {0} ..." -f $machine) "DEBUG" "Yellow"
@@ -187,7 +183,7 @@ foreach ($entry in $entries) {
             $key = ("{0}:{1}" -f $machine, $p.ProcessId)
             if ($ProcessedKeys.Contains($key)) { continue }
 
-            # Safely get owner via CIM method
+            # Owner
             $owner = $null
             $domain = $null
             try {
@@ -195,79 +191,61 @@ foreach ($entry in $entries) {
                 $owner  = $ownerInfo.User
                 $domain = $ownerInfo.Domain
             } catch {
-                # Controlled warning, do not spam full raw CIM error output
                 Write-Log ("Could not read owner for PID {0} on {1}: {2}" -f $p.ProcessId, $machine, $_.Exception.Message) "WARN" "DarkYellow"
-                # Mark processed to avoid repeated attempts on same PID in subsequent iterations
                 $ProcessedKeys[$key] = $true
                 continue
             }
 
-            # Normalize usernames for matching (PS 5.1 safe)
-            $ownerUser = ""
-            if ($null -ne $owner) { $ownerUser = $owner.ToLower() }
-
-            $domainVal = ""
-            if ($null -ne $domain) { $domainVal = $domain }
-
-            $ownerVal = ""
-            if ($null -ne $owner) { $ownerVal = $owner }
-
-            $ownerDomainUser = ("{0}\{1}" -f $domainVal, $ownerVal).Trim('\').ToLower()
+            $ownerUser = ($owner ?? "").ToLower()
+            $ownerDomainUser = ("{0}\{1}" -f $domain, $owner).Trim('\').ToLower()
             $targetUserLower = $osuser.ToLower()
 
-            # Accept match if either plain user or domain\user equals target
-            $userMatch = ($ownerUser -eq $targetUserLower) -or ($ownerDomainUser -eq $targetUserLower)
+            $userMatch = ($ownerUser -eq $targetUserLower) -or 
+                         ($ownerDomainUser -eq $targetUserLower)
 
             if ($userMatch) {
                 $cmd = $p.CommandLine
-                $cmdHasText = -not [string]::IsNullOrWhiteSpace($cmd)
+                if ($cmd -and ($cmd -match $schemRegex)) {
 
-                if ($cmdHasText -and ($cmd -match $schemRegex)) {
+                    $matchFound = $true   # <-- MATCH FOUND
+
                     $displayUser = if ($ownerDomainUser -ne "") { $ownerDomainUser } else { $ownerUser }
                     Write-Log ("MATCH: {0} running schematic '{1}' (PID: {2})" -f $displayUser, $schematicInput, $p.ProcessId) "INFO" "Green"
                     Write-Log ("CMD: {0}" -f $cmd) "DEBUG" "Cyan"
 
                     if (-not $DryRun) {
                         try {
-                            $result = Invoke-CimMethod -InputObject $p -MethodName Terminate -Arguments @{ Reason = 0 } -CimSession $sess -ErrorAction Stop
+                            $result = Invoke-CimMethod -InputObject $p -MethodName Terminate `
+                                      -Arguments @{ Reason = 0 } -CimSession $sess -ErrorAction Stop
                             if ($result.ReturnValue -eq 0) {
                                 Write-Host ("[PID KILLED] {0} on {1}" -f $p.ProcessId, $machine) -ForegroundColor Red
                                 $Killed += [PSCustomObject]@{ Machine = $machine; PID = $p.ProcessId; User = $displayUser; CommandLine = $cmd }
-                            } else {
-                                Write-Log ("Failed to kill process {0} on {1}. ReturnValue: {2}" -f $p.ProcessId, $machine, $result.ReturnValue) "ERROR" "Red"
                             }
                         } catch {
                             Write-Log ("Exception killing process {0} on {1}: {2}" -f $p.ProcessId, $machine, $_.Exception.Message) "ERROR" "Red"
-                        } finally {
-                            $ProcessedKeys[$key] = $true
                         }
-                    } else {
-                        # Dry-run: print PID that would be killed and record it
+                    }
+                    else {
                         Write-Host ("[PID WOULD-KILL] {0} on {1}" -f $p.ProcessId, $machine) -ForegroundColor Yellow
                         Write-Log ("DRY-RUN: Would have killed process {0} on {1}" -f $p.ProcessId, $machine) "INFO" "Yellow"
                         $WouldHaveKilled += [PSCustomObject]@{ Machine = $machine; PID = $p.ProcessId; User = $displayUser; CommandLine = $cmd }
-                        $ProcessedKeys[$key] = $true
                     }
+
+                    $ProcessedKeys[$key] = $true
                 }
             }
         }
+
+        # ===== NEW FEATURE: Print if NO match for THIS user on THIS machine =====
+        if (-not $matchFound) {
+            Write-Log ("No matching processes found for user '{0}' on {1}" -f $osuser, $machine) "INFO" "Yellow"
+        }
+
     } catch {
-        $msg = $_.Exception.Message
-        if ($msg -match "RPC server is unavailable" -or $msg -match "0x800706BA") {
-            Write-Log ("Failed to query {0}: RPC unavailable (HRESULT 0x800706BA). Check DCOM/WMI services or firewall, or prefer WinRM with FQDN." -f $machine) "ERROR" "Red"
-        } elseif ($msg -match "Access is denied") {
-            Write-Log ("Failed to query {0}: Access denied. Try -Credential or ensure admin rights." -f $machine) "ERROR" "Red"
-        } elseif ($msg -match "The WinRM client cannot process the request" -or $msg -match "TrustedHosts") {
-            Write-Log ("WinRM by IP requires HTTPS or TrustedHosts with explicit credentials. Use FQDN or add IP to TrustedHosts then retry with -Credential.") "ERROR" "Red"
-        } elseif ($msg -match "The network path was not found") {
-            Write-Log ("Failed to query {0}: Network path not found (name resolution or routing)." -f $machine) "ERROR" "Red"
-        } else {
-            Write-Log ("Failed to query {0}: {1}" -f $machine, $msg) "ERROR" "Red"
-        }
-    } finally {
-        if ($sess) {
-            try { Remove-CimSession $sess } catch {}
-        }
+        Write-Log ("Failed to query {0}: {1}" -f $machine, $_.Exception.Message) "ERROR" "Red"
+    }
+    finally {
+        if ($sess) { try { Remove-CimSession $sess } catch {} }
     }
 }
 
@@ -296,15 +274,18 @@ if ($DryRun) {
     }
 }
 
-# Write CSVs if ReportPath provided
 if ($ReportPath) {
     try {
-        if (-not (Test-Path -LiteralPath $ReportPath)) { New-Item -ItemType Directory -Path $ReportPath -Force | Out-Null }
+        if (-not (Test-Path -LiteralPath $ReportPath)) { 
+            New-Item -ItemType Directory -Path $ReportPath -Force | Out-Null 
+        }
         if ($WouldHaveKilled.Count -gt 0) {
-            $WouldHaveKilled | Select-Object Machine,PID,User,CommandLine | Export-Csv -Path (Join-Path $ReportPath "WouldHaveKilled.csv") -NoTypeInformation -Force
+            $WouldHaveKilled | Select-Object Machine,PID,User,CommandLine |
+                Export-Csv -Path (Join-Path $ReportPath "WouldHaveKilled.csv") -NoTypeInformation -Force
         }
         if ($Killed.Count -gt 0) {
-            $Killed | Select-Object Machine,PID,User,CommandLine | Export-Csv -Path (Join-Path $ReportPath "Killed.csv") -NoTypeInformation -Force
+            $Killed | Select-Object Machine,PID,User,CommandLine |
+                Export-Csv -Path (Join-Path $ReportPath "Killed.csv") -NoTypeInformation -Force
         }
         Write-Log ("Reports written to: {0}" -f $ReportPath) "INFO" "Cyan"
     } catch {
