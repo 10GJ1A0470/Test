@@ -17,7 +17,7 @@
 #>
 
 param(
-    [string]$InputPath  = "\\awsusdmkfsxn01.jnj.com\mdd_qa_omp\Automation_Scripts\Atom_SPQA_Scripts\PAK\SPQA8\log\servers.txt",
+    [string]$InputPath  = "********************\servers.txt",
     [bool]  $DryRun      = $false,
     [pscredential]$Credential = $null,
     [string]$ReportPath  = $null
