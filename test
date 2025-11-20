@@ -1,54 +1,27 @@
-import shutil
-import sys
+2025-11-20 05:28:42,434 - INFO - Skipping 'validate version details' as requirement is N
+2025-11-20 05:28:42,435 - INFO - Backup root folder D:/Backup not found. Creating now...
+2025-11-20 05:28:42,439 - INFO - Backing up target folder to: D:\Backup\External_20251120_052842
+2025-11-20 05:33:44,980 - INFO - Deleting target folder: \\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\Documentation\Documentation_R25_08_v1\Output\External
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\SA-ITS-APSPHINT-LAB\AppData\Local\Programs\Python\Python313\Lib\logging\__init__.py", line 1154, in emit
+    stream.write(msg + self.terminator)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SA-ITS-APSPHINT-LAB\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 111: character maps to <undefined>
+Call stack:
+  File "\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\PAK_Deployment - latest2.py", line 1800, in <module>
+    main_launcher()
+  File "\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\PAK_Deployment - latest2.py", line 1785, in main_launcher
+    replace_with_backup(source, target)
+  File "\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\PAK_Deployment - latest2.py", line 1698, in replace_with_backup
+    logging.info(f"Moving source folder {source} → {target}")
+Message: 'Moving source folder D:\\Documentation\\Documentation_R25_08_v1\\Output\\External → \\\\awsiedrofsxn01.jnj.com\\pharma_dev_omp\\JNJ_PHARMA_LAB\\OMPartners\\Documentation\\Documentation_R25_08_v1\\Output\\External'
+Arguments: ()
+2025-11-20 05:34:18,730 - INFO - Moving source folder D:\Documentation\Documentation_R25_08_v1\Output\External → \\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\Documentation\Documentation_R25_08_v1\Output\External
+2025-11-20 05:37:19,658 - INFO - Folder replacement (MOVE) completed successfully.
+2025-11-20 05:37:31,401 - INFO -  Email sent successfully with \\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\log\log_20251120_052841.txt
 
-def replace_with_backup(source_path, target_path):
-    try:
-        source = Path(source_path)
-        target = Path(target_path)
-
-        if not source.exists():
-            logging.error(f"Source folder does not exist: {source}")
-            sys.exit("Source folder missing. Exiting...")
-
-        # Create global backup directory if missing
-        backup_root = Path("D:/Backup")
-        if not backup_root.exists():
-            logging.info("Backup root folder D:/Backup not found. Creating now...")
-            backup_root.mkdir(parents=True, exist_ok=True)
-
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        target_folder_name = target.name
-        backup_path = backup_root / f"{target_folder_name}_{timestamp}"
-
-        # 1. Backup target path if exists
-        if target.exists():
-            try:
-                logging.info(f"Backing up target folder to: {backup_path}")
-                shutil.copytree(target, backup_path)
-            except Exception as e:
-                logging.error(f"Backup failed: {e}")
-                sys.exit("Backup failed. Exiting...")
-
-            # 2. Delete target folder
-            try:
-                logging.info(f"Deleting target folder: {target}")
-                shutil.rmtree(target)
-            except Exception as e:
-                logging.error(f"Failed to delete target folder: {e}")
-                sys.exit("Target deletion failed. Exiting...")
-        else:
-            logging.info("Target folder does not exist. Skipping backup/delete.")
-
-        # 3. MOVE source → target (FASTER)
-        try:
-            logging.info(f"Moving source folder {source} → {target}")
-            shutil.move(str(source), str(target))
-        except Exception as e:
-            logging.error(f"Move failed: {e}")
-            sys.exit("Move failed. Exiting...")
-
-        logging.info("Folder replacement (MOVE) completed successfully.")
-
-    except Exception as e:
-        logging.error(f"Unexpected error in replace_with_backup(): {e}")
-        sys.exit("Unexpected error. Exiting...")
+C:\Windows\system32>
