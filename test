@@ -17,8 +17,6 @@ def replace_with_backup(source_path, target_path):
             backup_root.mkdir(parents=True, exist_ok=True)
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        # Backup folder name will be like: D:/Backup/myfolder_YYYYMMDD_HHMMSS
         target_folder_name = target.name
         backup_path = backup_root / f"{target_folder_name}_{timestamp}"
 
@@ -41,25 +39,16 @@ def replace_with_backup(source_path, target_path):
         else:
             logging.info("Target folder does not exist. Skipping backup/delete.")
 
-        # 3. Copy source → target
+        # 3. MOVE source → target (FASTER)
         try:
-            logging.info(f"Copying source folder {source} → {target}")
-            shutil.copytree(source, target)
+            logging.info(f"Moving source folder {source} → {target}")
+            shutil.move(str(source), str(target))
         except Exception as e:
-            logging.error(f"Copy failed: {e}")
-            sys.exit("Copy failed. Exiting...")
+            logging.error(f"Move failed: {e}")
+            sys.exit("Move failed. Exiting...")
 
-        logging.info("Folder replacement completed successfully.")
+        logging.info("Folder replacement (MOVE) completed successfully.")
 
     except Exception as e:
         logging.error(f"Unexpected error in replace_with_backup(): {e}")
         sys.exit("Unexpected error. Exiting...")
-
-
-
-elif "folder replace" in action:
-    try:
-        source, target = map(str.strip, inputs.split(','))
-        replace_with_backup(source, target)
-    except Exception as e:
-        logging.error(f"Invalid input format for folder replace: {e}")
