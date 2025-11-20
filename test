@@ -1,9 +1,10 @@
-PS C:\Windows\system32> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-Set-ExecutionPolicy : Windows PowerShell updated your execution policy successfully, but the setting is overridden by a policy defined at a more specific 
-scope.  Due to the override, your shell will retain its current effective execution policy of RemoteSigned. Type "Get-ExecutionPolicy -List" to view your 
-execution policy settings. For more information please see "Get-Help Set-ExecutionPolicy".
-At line:1 char:1
-+ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : PermissionDenied: (:) [Set-ExecutionPolicy], SecurityException
-    + FullyQualifiedErrorId : ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand
+
+PS C:\Windows\system32> Get-ExecutionPolicy -List
+
+        Scope ExecutionPolicy
+        ----- ---------------
+MachinePolicy    RemoteSigned
+   UserPolicy       Undefined
+      Process          Bypass
+  CurrentUser       Undefined
+ LocalMachine    RemoteSigned
