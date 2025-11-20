@@ -1,1 +1,14 @@
-powershell.exe -ExecutionPolicy Bypass -File "\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\Check_Job_Status.ps1"
+PS C:\Windows\system32> powershell.exe -ExecutionPolicy Bypass -File "\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\Check_Job_Status.ps1"
+powershell.exe : File \\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\Check_Job_Stat
+At line:1 char:1
++ powershell.exe -ExecutionPolicy Bypass -File "\\awsiedrofsxn01.jnj.co ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (File \\awsiedro...\Check_Job_Stat:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+us.ps1 cannot be loaded. The file \\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\
+Automation\PAK\Check_Job_Status.ps1 is not digitally signed. You cannot run this script on the current system. For 
+more information about running scripts and setting execution policy, see about_Execution_Policies at 
+https:/go.microsoft.com/fwlink/?LinkID=135170.
+    + CategoryInfo          : SecurityError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnauthorizedAccess
