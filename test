@@ -1,7 +1,9 @@
-PS C:\Windows\system32> \\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\Check_Job_Status.ps1
-File \\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\Check_Job_Status.ps1 cannot be loaded. The file 
-\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\Check_Job_Status.ps1 is not digitally signed. You cannot 
-run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at 
-https:/go.microsoft.com/fwlink/?LinkID=135170.
-    + CategoryInfo          : SecurityError: (:) [], ParentContainsErrorRecordException
-    + FullyQualifiedErrorId : UnauthorizedAccess
+PS C:\Windows\system32> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+Set-ExecutionPolicy : Windows PowerShell updated your execution policy successfully, but the setting is overridden by a policy defined at a more specific 
+scope.  Due to the override, your shell will retain its current effective execution policy of RemoteSigned. Type "Get-ExecutionPolicy -List" to view your 
+execution policy settings. For more information please see "Get-Help Set-ExecutionPolicy".
+At line:1 char:1
++ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : PermissionDenied: (:) [Set-ExecutionPolicy], SecurityException
+    + FullyQualifiedErrorId : ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand
