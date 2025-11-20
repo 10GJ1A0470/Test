@@ -1,10 +1,1 @@
-
-PS C:\Windows\system32> Get-ExecutionPolicy -List
-
-        Scope ExecutionPolicy
-        ----- ---------------
-MachinePolicy    RemoteSigned
-   UserPolicy       Undefined
-      Process          Bypass
-  CurrentUser       Undefined
- LocalMachine    RemoteSigned
+powershell.exe -ExecutionPolicy Bypass -File "\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\Check_Job_Status.ps1"
