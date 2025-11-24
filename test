@@ -1,39 +1,38 @@
-def remove_active_users():
-    logging.info("Removing active users script execution started")
+# ===============================
+# Kill Event Monitor (PROD instance)
+# ===============================
 
-    # Check if servers.txt exists
-    if not SERVERS_FILE.exists():
-        logging.error(f"servers.txt not found at: {SERVERS_FILE}")
-        return
+$Server = "AWSDMLNVAW000D"   
 
-    # Check if file is empty
-    if SERVERS_FILE.stat().st_size == 0:
-        logging.warning("servers.txt is empty — No active users found. Skipping removal.")
-        return
+try {
+    Write-Host "Looking for Event Monitor PROD process on $Server ..." -ForegroundColor Cyan
 
-    try:
-        result = subprocess.run(
-            [
-                "powershell",
-                "-ExecutionPolicy", "Bypass",
-                "-File",
-                r"\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Remove_Active_Users5.ps1"
-            ],
-            check=True,
-            capture_output=True,
-            text=True
-        )
+    # Get processes where CommandLine has both 'Event Monitor' and 'PROD'
+    $PRODProc = Invoke-Command -ComputerName $Server -ScriptBlock {
+        Get-CimInstance Win32_Process |
+            Where-Object { $_.CommandLine -match "Event\s*Monitor" -and $_.CommandLine -match "PROD" } |
+            Select-Object ProcessId, Name, CommandLine, @{Name="User";Expression={ ($_.GetOwner()).User }}, CreationDate
+    }
 
-        # Log all PowerShell output
-        with open(log_filename, "a") as f:
-            f.write(result.stdout)
-            f.write(result.stderr)
+    if (-not $PRODProc) {
+        Write-Host "[$Server] - No PROD Event Monitor process found." -ForegroundColor Yellow
+    }
+    else {
+        foreach ($proc in $PRODProc) {
+            # Kill process directly by PID
+            Invoke-Command -ComputerName $Server -ScriptBlock {
+                param($ProcId)
+                Stop-Process -Id $ProcId -Force -ErrorAction Stop
+            } -ArgumentList $proc.ProcessId
 
-        logging.info("All active users removed successfully.")
-
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Active user removal failed with return code {e.returncode}")
-        logging.error(f"STDOUT: {e.stdout}")
-        logging.error(f"STDERR: {e.stderr}")
-        # DO NOT stop script — just log and continue
-        logging.warning("Skipping active user removal and continuing execution.")
+            Write-Host "[$Server] - PROD Event Monitor (PID $($proc.ProcessId)) killed." -ForegroundColor Green
+            Write-Host "    User       : $($proc.User)"
+            Write-Host "    CommandLine: $($proc.CommandLine)"
+            Write-Host "    Started On : $($proc.CreationDate)"
+            Write-Host ""
+        }
+    }
+}
+catch {
+    Write-Host "[$Server] - Error while killing PROD Event Monitor. $_" -ForegroundColor Red
+}
