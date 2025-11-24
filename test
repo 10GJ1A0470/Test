@@ -1,38 +1,38 @@
-# ===============================
-# Kill Event Monitor (PROD instance)
-# ===============================
+$Server = "AWSDMLNVAW000D"
+$TargetUser = "SA-ITS-APSMDAUT-PRD"
 
-$Server = "AWSDMLNVAW000D"   
+Write-Host "Checking for 'ompplus' process on $Server ..." -ForegroundColor Cyan
 
 try {
-    Write-Host "Looking for Event Monitor PROD process on $Server ..." -ForegroundColor Cyan
-
-    # Get processes where CommandLine has both 'Event Monitor' and 'PROD'
-    $PRODProc = Invoke-Command -ComputerName $Server -ScriptBlock {
-        Get-CimInstance Win32_Process |
-            Where-Object { $_.CommandLine -match "Event\s*Monitor" -and $_.CommandLine -match "PROD" } |
-            Select-Object ProcessId, Name, CommandLine, @{Name="User";Expression={ ($_.GetOwner()).User }}, CreationDate
+    $procList = Invoke-Command -ComputerName $Server -ScriptBlock {
+        Get-CimInstance Win32_Process | 
+            Where-Object { $_.Name -match "ompplus" } |
+            Select-Object ProcessId, Name, CommandLine, 
+                @{Name="User"; Expression = { ($_.GetOwner()).User }}, 
+                CreationDate
     }
 
-    if (-not $PRODProc) {
-        Write-Host "[$Server] - No PROD Event Monitor process found." -ForegroundColor Yellow
-    }
-    else {
-        foreach ($proc in $PRODProc) {
-            # Kill process directly by PID
-            Invoke-Command -ComputerName $Server -ScriptBlock {
-                param($ProcId)
-                Stop-Process -Id $ProcId -Force -ErrorAction Stop
-            } -ArgumentList $proc.ProcessId
+    # Filter by username
+    $matched = $procList | Where-Object { $_.User -eq $using:TargetUser }
 
-            Write-Host "[$Server] - PROD Event Monitor (PID $($proc.ProcessId)) killed." -ForegroundColor Green
-            Write-Host "    User       : $($proc.User)"
-            Write-Host "    CommandLine: $($proc.CommandLine)"
-            Write-Host "    Started On : $($proc.CreationDate)"
-            Write-Host ""
-        }
+    if (!$matched) {
+        Write-Host "No jobs running." -ForegroundColor Yellow
+        exit
+    }
+
+    foreach ($p in $matched) {
+        Write-Host ""
+        Write-Host "Process found:" -ForegroundColor Green
+        Write-Host "   PID         : $($p.ProcessId)"
+        Write-Host "   Name        : $($p.Name)"
+        Write-Host "   User        : $($p.User)"
+        Write-Host "   Started On  : $($p.CreationDate)"
+        Write-Host "   CommandLine : $($p.CommandLine)"
+        Write-Host ""
     }
 }
 catch {
-    Write-Host "[$Server] - Error while killing PROD Event Monitor. $_" -ForegroundColor Red
+    Write-Host "Error connecting to server or fetching process. $_" -ForegroundColor Red
 }
+
+exit
