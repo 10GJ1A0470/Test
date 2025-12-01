@@ -3,45 +3,40 @@ def check_job_status(
     exit_on_running: bool = False,
     timeout: int = 60
 ) -> Tuple[bool, str]:
-    """
-    Run the PowerShell script to check job status.
 
-    Returns:
-      (jobs_running: bool, output: str)
-      - jobs_running == False means "No jobs running"
-      - jobs_running == True  means "Some jobs are running"
-    If exit_on_running is True and jobs are running, the function will call sys.exit(1).
-    """
     logging.info("Job status checking script execution started")
 
     try:
         result = subprocess.run(
             ["powershell", "-ExecutionPolicy", "Bypass", "-File", ps_script_path],
-            check=True,
             capture_output=True,
             text=True,
             timeout=timeout
         )
-        output = result.stdout.strip()
-        logging.info("Powershell Output: %s", output)
 
-        if "No jobs running" in output:
-            logging.info("No Jobs Running...")
-            return False, output
-        else:
+        output = result.stdout.strip()
+        logging.info("PowerShell Output: %s", output)
+
+        # --- Logic we use ---
+        jobs_running = "No jobs running" not in output
+
+        if jobs_running:
             logging.info("Jobs are Running")
+
             if exit_on_running:
+                logging.info("Exiting Python because jobs are running")
                 sys.exit(1)
+
             return True, output
 
-    except subprocess.CalledProcessError as e:
-        # e.returncode, e.stdout, e.stderr may be available
-        stderr = getattr(e, "stderr", None)
-        logging.error("PowerShell script returned non-zero exit code. returncode=%s stderr=%s", getattr(e, "returncode", "N/A"), stderr)
-        raise
-    except subprocess.TimeoutExpired as e:
+        else:
+            logging.info("No Jobs Running... continuing...")
+            return False, output
+
+    except subprocess.TimeoutExpired:
         logging.error("PowerShell script timed out after %s seconds", timeout)
         raise
+
     except Exception:
         logging.exception("Unexpected error while checking job status")
         raise
