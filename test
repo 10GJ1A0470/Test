@@ -1,12 +1,12 @@
-$Server = "AWSDMLNVAW000D"
-$TargetUser = "SA-ITS-APSMDAUT-PRD"
+$Server = "AWSDROIRLW0009"
+$TargetUser = "SA-ITS-APSPHINT-LAB"
 
-Write-Host "Checking for 'ompplus' process on $Server ..." -ForegroundColor Cyan
+Write-Host "Checking for 'ompeditor' process on $Server ..." -ForegroundColor Cyan
 
 try {
     $procList = Invoke-Command -ComputerName $Server -ScriptBlock {
         Get-CimInstance Win32_Process | 
-            Where-Object { $_.Name -match "ompplus" } |
+            Where-Object { $_.Name -match "ompeditor" } |
             Select-Object ProcessId, Name, CommandLine, 
                 @{Name="User"; Expression = { ($_.GetOwner()).User }}, 
                 CreationDate
@@ -36,3 +36,13 @@ catch {
 }
 
 exit
+
+
+
+
+
+
+PS C:\Windows\system32> \\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\Check_Job_Status.ps1
+Checking for 'ompeditor' process on AWSDROIRLW0009 ...
+Error connecting to server or fetching process. A Using variable cannot be retrieved. A Using variable can be used only with Invoke-Command, Start-Job, or InlineScript in the script 
+workflow. When it is used with Invoke-Command, the Using variable is valid only if the script block is invoked on a remote computer.
