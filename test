@@ -1,42 +1,26 @@
-def check_job_status(
-    ps_script_path: str = r"\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\Check_Job_Status1.ps1",
-    exit_on_running: bool = False,
-    timeout: int = 60
-) -> Tuple[bool, str]:
+C:\Windows\system32>python "\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\PAK_Deployment - latest2.py"
+2025-12-01 14:29:10,994 - INFO -  Running SQL*Plus commands with full output...
+2025-12-01 14:29:11,858 - INFO -  SQL commands executed.
+2025-12-01 14:29:11,860 - INFO -  Main log written to       \\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\log\log_20251201_142910.txt
+2025-12-01 14:29:11,861 - INFO -   Server list written to   \\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\log\servers.txt
+2025-12-01 14:29:11,863 - INFO -  STDOUT log  sqlplus_stdout.txt
+2025-12-01 14:29:11,864 - INFO -  STDERR log  sqlplus_stderr.txt
+2025-12-01 14:29:11,865 - INFO - Job status checking script execution started
+2025-12-01 14:29:14,356 - INFO - PowerShell Output: Checking for 'ompeditor' process on AWSDROIRLW0009 ...
 
-    logging.info("Job status checking script execution started")
+Process found:
+   PID         : 9104
+   Name        : ompeditor_06_09_026_x64u.exe
+   User        : SA-ITS-APSPHINT-LAB
+   Started On  : 20251201120040.249064+060
+   CommandLine : "D:\OMClient\BIN\ompeditor_06_09_026_x64u\ompeditor_06_09_026_x64u.exe"  "/database={OMP_JNJ_PH_OLY_LAB_utl@DIR69002}" "/PAK={\\awsiedrofsxn01.jnj.com\pharma_dev_omp\OMPInstallpoint\LAB_R06_09\ExeAndPakSource\Dispatcher_EDT_06_09_018.pak,\\awsiedrofsxn01\pharma_dev_omp\OMPInstallpoint\LAB_R06_09\solutions\LSS\last\06_09A_040\pak\LSS_UTL_DSP_06_09A_040.pak,\\awsiedrofsxn01\pharma_dev_omp\OMPInstallpoint\LAB_R06_09\solutions\JnJ_Pharma\last\25_08_001\pak\jnj_pharma_UTL_DSP_25_08_001.pak}" "/RUN" "/RUNONCE=DSPlab" "/cuprof={OMP Dispatcher}" "/CUApplication=DSP" "/SET_FM_APPLICATIONDIR=\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher" "/LOGDIR=\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\omdata\lab\dispatcher" "/INVISIBLE" "/SET_OM_WEBSERVICENAME=OMPDispatcher" "/SET_OM_WEBSERVICEPORT=8005"
 
-    try:
-        result = subprocess.run(
-            ["powershell", "-ExecutionPolicy", "Bypass", "-File", ps_script_path],
-            capture_output=True,
-            text=True,
-            timeout=timeout
-        )
-
-        output = result.stdout.strip()
-        logging.info("PowerShell Output: %s", output)
-
-        # --- Logic we use ---
-        jobs_running = "No jobs running" not in output
-
-        if jobs_running:
-            logging.info("Jobs are Running")
-
-            if exit_on_running:
-                logging.info("Exiting Python because jobs are running")
-                sys.exit(1)
-
-            return True, output
-
-        else:
-            logging.info("No Jobs Running... continuing...")
-            return False, output
-
-    except subprocess.TimeoutExpired:
-        logging.error("PowerShell script timed out after %s seconds", timeout)
-        raise
-
-    except Exception:
-        logging.exception("Unexpected error while checking job status")
-        raise
+Process found:
+   PID         : 17160
+   Name        : ompeditor_06_09_026_x64u.exe
+   User        : SA-ITS-APSPHINT-LAB
+   Started On  : 20251201125558.943168+060
+   CommandLine : D:\OMClient\BIN\ompeditor_06_09_026_x64u\ompeditor_06_09_026_x64u.exe  /database={OMP_JNJ_PH_OLY_LAB_fct@DIR69002} /CUPROF=HDL_HistoryDownloads_EDT /CUTASK=HDL_SalesOrders_EDT /PAK={\\awsiedrofsxn01.jnj.com\pharma_dev_omp\OMPInstallpoint\LAB_R06_09\ExeAndPakSource\META_EDT_06_09_017.pak,\\awsiedrofsxn01.jnj.com\pharma_dev_omp\OMPInstallpoint\LAB_R06_09\ExeAndPakSource\REF_FCT_EDT_06_09_024.pak,\\awsiedrofsxn01.jnj.com\pharma_dev_omp\OMPInstallpoint\LAB_R06_09\ExeAndPakSource\STS_FCT_DM_EDT_06_09_017.pak,\\awsiedrofsxn01\pharma_dev_omp\OMPInstallpoint\LAB_R06_09\solutions\LSS\last\06_09A_040\pak\LSS_FCT_SAPADV_06_09A_040.pak,\\awsiedrofsxn01\pharma_dev_omp\OMPInstallpoint\LAB_R06_09\solutions\JnJ_Pharma\last\25_08_001\pak\jnj_pharma_FCT_SAPADV_25_08_001.pak} /SET_HDL_ExecuteDownloadId=DEFAULT_DLID_HDL_SO   /SET_HDL_ExecuteFinalTemplates=EDT /SET_OM_MacroAfterStartup=@Setting_OM_MacroAfterStartup_Advanced_GetHistory /INVISIBLE /EXITAFTERSTARTUP /INCREMENTAL /NOCRYSTAL /SET_FM_APPLICATIONDIR=\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\editor
+2025-12-01 14:29:14,359 - INFO - Jobs are Running
+2025-12-01 14:29:14,363 - INFO - Removing active users script execution started
+2025-12-01 14:29:15,925 - INFO - All active users removed successfully
