@@ -1,43 +1,47 @@
-$Server = "AWSDROIRLW0009"
-$TargetUser = "SA-ITS-APSPHINT-LAB"
+def check_job_status(
+    ps_script_path: str = r"\\awsiedrofsxn01.jnj.com\pharma_dev_omp\JNJ_PHARMA_LAB\OMPartners\lab\dispatcher\bin\Automation\PAK\Check_Job_Status1.ps1",
+    exit_on_running: bool = False,
+    timeout: int = 60
+) -> Tuple[bool, str]:
+    """
+    Run the PowerShell script to check job status.
 
-Write-Host "Checking for 'ompeditor' process on $Server ..." -ForegroundColor Cyan
+    Returns:
+      (jobs_running: bool, output: str)
+      - jobs_running == False means "No jobs running"
+      - jobs_running == True  means "Some jobs are running"
+    If exit_on_running is True and jobs are running, the function will call sys.exit(1).
+    """
+    logging.info("Job status checking script execution started")
 
-try {
-    $procList = Invoke-Command -ComputerName $Server -ScriptBlock {
-        Get-WmiObject Win32_Process |
-            Where-Object { $_.Name -match "ompeditor" } |
-            ForEach-Object {
-                $owner = $_.GetOwner()
-                [PSCustomObject]@{
-                    ProcessId   = $_.ProcessId
-                    Name        = $_.Name
-                    CommandLine = $_.CommandLine
-                    User        = $owner.User
-                    CreationDate = $_.CreationDate
-                }
-            }
-    }
+    try:
+        result = subprocess.run(
+            ["powershell", "-ExecutionPolicy", "Bypass", "-File", ps_script_path],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=timeout
+        )
+        output = result.stdout.strip()
+        logging.info("Powershell Output: %s", output)
 
-    # Local filtering – no $using:
-    $matched = $procList | Where-Object { $_.User -eq $TargetUser }
+        if "No jobs running" in output:
+            logging.info("No Jobs Running...")
+            return False, output
+        else:
+            logging.info("Jobs are Running")
+            if exit_on_running:
+                sys.exit(1)
+            return True, output
 
-    if (!$matched) {
-        Write-Host "No jobs running." -ForegroundColor Yellow
-        exit
-    }
-
-    foreach ($p in $matched) {
-        Write-Host "`nProcess found:" -ForegroundColor Green
-        Write-Host "   PID         : $($p.ProcessId)"
-        Write-Host "   Name        : $($p.Name)"
-        Write-Host "   User        : $($p.User)"
-        Write-Host "   Started On  : $($p.CreationDate)"
-        Write-Host "   CommandLine : $($p.CommandLine)"
-    }
-}
-catch {
-    Write-Host "Error connecting to server or fetching process. $_" -ForegroundColor Red
-}
-
-exit
+    except subprocess.CalledProcessError as e:
+        # e.returncode, e.stdout, e.stderr may be available
+        stderr = getattr(e, "stderr", None)
+        logging.error("PowerShell script returned non-zero exit code. returncode=%s stderr=%s", getattr(e, "returncode", "N/A"), stderr)
+        raise
+    except subprocess.TimeoutExpired as e:
+        logging.error("PowerShell script timed out after %s seconds", timeout)
+        raise
+    except Exception:
+        logging.exception("Unexpected error while checking job status")
+        raise
