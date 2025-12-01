@@ -5,14 +5,21 @@ Write-Host "Checking for 'ompeditor' process on $Server ..." -ForegroundColor Cy
 
 try {
     $procList = Invoke-Command -ComputerName $Server -ScriptBlock {
-        Get-CimInstance Win32_Process | 
+        Get-WmiObject Win32_Process |
             Where-Object { $_.Name -match "ompeditor" } |
-            Select-Object ProcessId, Name, CommandLine,
-                @{Name="User"; Expression = { ($_.GetOwner()).User }},
-                CreationDate
+            ForEach-Object {
+                $owner = $_.GetOwner()
+                [PSCustomObject]@{
+                    ProcessId   = $_.ProcessId
+                    Name        = $_.Name
+                    CommandLine = $_.CommandLine
+                    User        = $owner.User
+                    CreationDate = $_.CreationDate
+                }
+            }
     }
 
-    # Filter locally — DO NOT use $using:
+    # Local filtering – no $using:
     $matched = $procList | Where-Object { $_.User -eq $TargetUser }
 
     if (!$matched) {
@@ -21,14 +28,12 @@ try {
     }
 
     foreach ($p in $matched) {
-        Write-Host ""
-        Write-Host "Process found:" -ForegroundColor Green
+        Write-Host "`nProcess found:" -ForegroundColor Green
         Write-Host "   PID         : $($p.ProcessId)"
         Write-Host "   Name        : $($p.Name)"
         Write-Host "   User        : $($p.User)"
         Write-Host "   Started On  : $($p.CreationDate)"
         Write-Host "   CommandLine : $($p.CommandLine)"
-        Write-Host ""
     }
 }
 catch {
