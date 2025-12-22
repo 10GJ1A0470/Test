@@ -1,66 +1,85 @@
-import zipfile
-import shutil
-import os
-import pandas as pd
+# Check-Processes-PerName-Fixed.ps1
+# For each process name in $ProcessNames:
+#  - find processes whose Name contains that token on the remote server
+#  - for each found process, verify Owner (username) and CommandLine (schema)
+#  - print every match
 
-# ---- Read Excel Sheet 3 ----
-excel_file = r"path\to\your\file.xlsx"     # <-- mee Excel path ikkad ivvali
-df = pd.read_excel(excel_file, sheet_name="Sheet3")
+$Server       = "AWSDROIRLW0009"
+$TargetUser   = "SA-ITS-APSPHINT-DEV1"
+$SchemaPrefix = "JNJ_PH_OLY_DEV_604"
 
-# Convert Excel rows into dictionary
-inputs = {}
-for idx, row in df.iterrows():
-    key = str(row['Action']).strip()
-    value = str(row['Inputs']).strip()
-    inputs[key] = value
+# Processes to check (add or remove names here)
+$ProcessNames = @("ompplus","sapintegrator1","scintegrator","ompeditor")
 
-# Extract required paths
-zip_path = inputs.get("zip_path")
-target_folder = inputs.get("Target_folder")
-backup_folder = inputs.get("Backup_folder")
+Write-Host "Checking processes one-by-one on $Server for user '$TargetUser' and schema '$SchemaPrefix'..." -ForegroundColor Cyan
 
-# Temporary extract location
-extract_to = os.path.join(os.path.dirname(zip_path), "temp_extract")
+try {
+    $allMatches = @()
 
-print("Excel Inputs Loaded:")
-print("Zip File:", zip_path)
-print("Target Folder:", target_folder)
-print("Backup Folder:", backup_folder)
-print("Extract To:", extract_to)
-print("--------------------------")
+    foreach ($token in $ProcessNames) {
+        Write-Host "`nSearching for processes matching token '$token' ..." -ForegroundColor Cyan
 
-# ---- 1. Unzip the file ----
-print("Unzipping...")
-if os.path.exists(extract_to):
-    shutil.rmtree(extract_to)
-with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-    zip_ref.extractall(extract_to)
-print("Unzip Complete!\n")
+        # Query remote for processes whose Name contains the token (case-insensitive)
+        $candidates = Invoke-Command -ComputerName $Server -ScriptBlock {
+            param($t)
+            Get-WmiObject Win32_Process -ErrorAction Stop |
+                Where-Object { $_.Name -and ($_.Name -ilike "*$t*") } |
+                ForEach-Object {
+                    $owner = $_.GetOwner()
+                    [PSCustomObject]@{
+                        SearchToken  = $t
+                        ProcessId    = $_.ProcessId
+                        Name         = $_.Name
+                        CommandLine  = $_.CommandLine
+                        OwnerUser    = if ($owner) { $owner.User } else { $null }
+                        OwnerDomain  = if ($owner) { $owner.Domain } else { $null }
+                        CreationDate = $_.CreationDate
+                    }
+                }
+        } -ArgumentList $token -ErrorAction Stop
 
-# ---- 2. Backup Target Folder ----
-print("Taking Backup...")
-if os.path.exists(backup_folder):
-    shutil.rmtree(backup_folder)
-shutil.copytree(target_folder, backup_folder)
-print("Backup Complete!\n")
+        if (-not $candidates) {
+            Write-Host "  No processes found for token '$token'." -ForegroundColor Yellow
+            continue
+        }
 
-# ---- 3. Delete Files In Target Folder ----
-print("Deleting files from target folder...")
-for root, dirs, files in os.walk(target_folder):
-    for file in files:
-        os.remove(os.path.join(root, file))
-print("Deletion Complete!\n")
+        # For each candidate, verify the username and schema prefix
+        foreach ($proc in $candidates) {
+            $ownerFull = if ($proc.OwnerDomain -and $proc.OwnerUser) { "$($proc.OwnerDomain)\$($proc.OwnerUser)" } else { $proc.OwnerUser }
 
-# ---- 4. Copy Extracted Files ----
-print("Copying extracted files to target folder...")
-for root, dirs, files in os.walk(extract_to):
-    rel_path = os.path.relpath(root, extract_to)
-    dest_path = os.path.join(target_folder, rel_path)
+            # Username match: allow either exact user or appearing as substring (case-insensitive)
+            $userMatches = $false
+            if ($proc.OwnerUser) {
+                if ($proc.OwnerUser -ieq $TargetUser) { $userMatches = $true }
+                elseif ($ownerFull -and ($ownerFull -ilike "*$TargetUser*")) { $userMatches = $true }
+            }
 
-    if not os.path.exists(dest_path):
-        os.makedirs(dest_path)
+            # CommandLine match: contains schema prefix (case-insensitive)
+            $cmdMatches = ($proc.CommandLine -and ($proc.CommandLine -ilike "*$SchemaPrefix*"))
 
-    for file in files:
-        shutil.copy2(os.path.join(root, file), os.path.join(dest_path, file))
+            if ($userMatches -and $cmdMatches) {
+                $allMatches += $proc
 
-print("✔ All Steps Completed Successfully!")
+                Write-Host "`nProcess matched (token: $($proc.SearchToken)):" -ForegroundColor Green
+                Write-Host "   PID         : $($proc.ProcessId)"
+                Write-Host "   Name        : $($proc.Name)"
+                Write-Host "   User        : $ownerFull"
+                Write-Host "   Started On  : $($proc.CreationDate)"
+                Write-Host "   CommandLine : $($proc.CommandLine)"
+            }
+        }
+    }
+
+    if (-not $allMatches) {
+        Write-Host "`nNo jobs found matching the user and schema for any of the process tokens." -ForegroundColor Yellow
+        exit 0
+    }
+
+    Write-Host "`nSummary: $($allMatches.Count) matching process(es) found." -ForegroundColor Cyan
+}
+catch {
+    Write-Host "Error connecting to server or fetching process: $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
+}
+
+exit 0
