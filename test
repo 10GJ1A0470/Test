@@ -1,14 +1,15 @@
 # Check-Processes-PerName-Fixed.ps1
 # For each process name in $ProcessNames:
 #  - find processes whose Name contains that token on the remote server
-#  - for each found process, verify Owner (username) and CommandLine (schema)
-#  - print every match
+#  - verify Owner (username) and CommandLine (schema)
+#  - SPECIAL CASE:
+#       * for 'ompeditor' → if CommandLine contains 'Dispatcher', do NOT consider as job
 
 $Server       = "AWSDROIRLW0009"
 $TargetUser   = "SA-ITS-APSPHINT-DEV1"
 $SchemaPrefix = "JNJ_PH_OLY_DEV_604"
 
-# Processes to check (add or remove names here)
+# Processes to check
 $ProcessNames = @("ompplus","sapintegrator1","scintegrator","ompeditor")
 
 Write-Host "Checking processes one-by-one on $Server for user '$TargetUser' and schema '$SchemaPrefix'..." -ForegroundColor Cyan
@@ -19,7 +20,7 @@ try {
     foreach ($token in $ProcessNames) {
         Write-Host "`nSearching for processes matching token '$token' ..." -ForegroundColor Cyan
 
-        # Query remote for processes whose Name contains the token (case-insensitive)
+        # Query remote for processes whose Name contains the token
         $candidates = Invoke-Command -ComputerName $Server -ScriptBlock {
             param($t)
             Get-WmiObject Win32_Process -ErrorAction Stop |
@@ -43,21 +44,39 @@ try {
             continue
         }
 
-        # For each candidate, verify the username and schema prefix
         foreach ($proc in $candidates) {
-            $ownerFull = if ($proc.OwnerDomain -and $proc.OwnerUser) { "$($proc.OwnerDomain)\$($proc.OwnerUser)" } else { $proc.OwnerUser }
 
-            # Username match: allow either exact user or appearing as substring (case-insensitive)
-            $userMatches = $false
-            if ($proc.OwnerUser) {
-                if ($proc.OwnerUser -ieq $TargetUser) { $userMatches = $true }
-                elseif ($ownerFull -and ($ownerFull -ilike "*$TargetUser*")) { $userMatches = $true }
+            $ownerFull = if ($proc.OwnerDomain -and $proc.OwnerUser) {
+                "$($proc.OwnerDomain)\$($proc.OwnerUser)"
+            } else {
+                $proc.OwnerUser
             }
 
-            # CommandLine match: contains schema prefix (case-insensitive)
+            # Username match
+            $userMatches = $false
+            if ($proc.OwnerUser) {
+                if ($proc.OwnerUser -ieq $TargetUser) {
+                    $userMatches = $true
+                }
+                elseif ($ownerFull -and ($ownerFull -ilike "*$TargetUser*")) {
+                    $userMatches = $true
+                }
+            }
+
+            # Schema match
             $cmdMatches = ($proc.CommandLine -and ($proc.CommandLine -ilike "*$SchemaPrefix*"))
 
+            # Dispatcher check (only relevant for ompeditor)
+            $dispatcherPresent = $proc.CommandLine -and ($proc.CommandLine -ilike "*Dispatcher*")
+
             if ($userMatches -and $cmdMatches) {
+
+                # Skip ompeditor jobs having Dispatcher in command line
+                if ($proc.SearchToken -ieq "ompeditor" -and $dispatcherPresent) {
+                    Write-Host "   Skipping ompeditor process (Dispatcher found in CommandLine)" -ForegroundColor DarkYellow
+                    continue
+                }
+
                 $allMatches += $proc
 
                 Write-Host "`nProcess matched (token: $($proc.SearchToken)):" -ForegroundColor Green
