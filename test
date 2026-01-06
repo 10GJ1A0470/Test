@@ -1,4 +1,84 @@
-Action	Requirement	Inputs
-zip_path	Y	\\itsbebec1phar01\pharma_dev_expdp\Bhushan\Hotfix\JnJ_Auto_Approve_Runs.zip
-Target_folder	Y	\\itsbebec1phar01\pharma_dev_expdp\Bhushan\Hotfix\target
-Backup_folder	Y	\\itsbebec1phar01\pharma_dev_expdp\Bhushan\Hotfix\backup
+import os
+import shutil
+import zipfile
+import pandas as pd
+
+# ---- Read Excel ----
+excel_file = r"PAK_Standard_requirement.xlsx"
+df = pd.read_excel(excel_file, sheet_name="Sheet3")
+
+inputs = {}
+reqs = {}
+
+for _, row in df.iterrows():
+    action = str(row['Action']).strip()
+    reqs[action] = str(row['Requirement']).strip()
+    inputs[action] = str(row['Inputs']).strip()
+
+zip_flag = reqs.get("zip_path")
+zip_input = inputs.get("zip_path")
+
+target_path = inputs.get("Target_path")
+backup_path = inputs.get("Backup_path")
+
+backup_flag = reqs.get("Backup_files")
+backup_files = inputs.get("Backup_files", "").split(",")
+
+adding_flag = reqs.get("Adding_files")
+adding_files = inputs.get("Adding_files", "").split(",")
+
+# ---- STEP 1: ZIP unzip & MOVE ----
+if zip_flag == "Y":
+    extract_to = os.path.join(os.path.dirname(zip_input), "temp_extract")
+
+    if os.path.exists(extract_to):
+        shutil.rmtree(extract_to)
+
+    with zipfile.ZipFile(zip_input, 'r') as zip_ref:
+        zip_ref.extractall(extract_to)
+
+    for item in os.listdir(extract_to):
+        src = os.path.join(extract_to, item)
+        dest = os.path.join(target_path, item)
+
+        if os.path.exists(dest):
+            if os.path.isdir(dest):
+                shutil.rmtree(dest)
+            else:
+                os.remove(dest)
+
+        shutil.move(src, dest)
+
+# ---- STEP 2: BACKUP FILES (MOVE) ----
+if backup_flag == "Y":
+    for file in backup_files:
+        file = file.strip()
+        src = os.path.join(target_path, file)
+
+        if os.path.exists(src):
+            dest = os.path.join(backup_path, file)
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            shutil.move(src, dest)
+            print(f"Backed up: {file}")
+        else:
+            print(f"Backup file not found: {file}")
+
+# ---- STEP 3: ADDING FILES (MOVE) ----
+if adding_flag == "Y":
+    # source for adding = zip input if zip=N, else already extracted folder not needed
+    source_root = os.path.dirname(zip_input) if zip_flag == "N" else None
+
+    for file in adding_files:
+        file = file.strip()
+        src = os.path.join(source_root, file)
+        dest = os.path.join(target_path, file)
+
+        if not os.path.exists(src):
+            print(f"Adding file not found: {file}")
+            continue
+
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        shutil.move(src, dest)
+        print(f"Added: {file}")
+
+print("✔ All 3 steps executed successfully!")
