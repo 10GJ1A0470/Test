@@ -5,6 +5,7 @@ import pandas as pd
 
 # ---- Read Excel ----
 excel_file = r"PAK_Standard_requirement.xlsx"
+print(f"Reading Excel file: {excel_file}")
 df = pd.read_excel(excel_file, sheet_name="Sheet3")
 
 inputs = {}
@@ -14,6 +15,9 @@ for _, row in df.iterrows():
     action = str(row['Action']).strip()
     reqs[action] = str(row['Requirement']).strip()
     inputs[action] = str(row['Inputs']).strip()
+print("Excel data loaded.")
+print(f"Actions to perform: {reqs}")
+print(f"Inputs provided: {inputs}")
 
 zip_flag = reqs.get("zip_path")
 zip_input = inputs.get("zip_path")
@@ -29,13 +33,16 @@ adding_files = inputs.get("Adding_files", "").split(",")
 
 # ---- STEP 1: ZIP unzip & MOVE ----
 if zip_flag == "Y":
+    print(f"\nSTEP 1: Unzipping {zip_input}")
     extract_to = os.path.join(os.path.dirname(zip_input), "temp_extract")
 
     if os.path.exists(extract_to):
+        print(f"Cleaning existing temp folder: {extract_to}")
         shutil.rmtree(extract_to)
 
     with zipfile.ZipFile(zip_input, 'r') as zip_ref:
         zip_ref.extractall(extract_to)
+        print(f"Extracted zip to: {extract_to}")
 
     for item in os.listdir(extract_to):
         src = os.path.join(extract_to, item)
@@ -44,29 +51,38 @@ if zip_flag == "Y":
         if os.path.exists(dest):
             if os.path.isdir(dest):
                 shutil.rmtree(dest)
+                print(f"Removed existing directory at target: {dest}")
             else:
                 os.remove(dest)
+                print(f"Removed existing file at target: {dest}")
 
         shutil.move(src, dest)
+        print(f"Moved {item} to {target_path}")
+else:
+    print("\nSTEP 1: Zip step skipped.")
 
 # ---- STEP 2: BACKUP FILES (MOVE) ----
 if backup_flag == "Y":
+    print("\nSTEP 2: Backing up files...")
     for file in backup_files:
         file = file.strip()
         src = os.path.join(target_path, file)
+        dest = os.path.join(backup_path, file)
 
         if os.path.exists(src):
-            dest = os.path.join(backup_path, file)
             os.makedirs(os.path.dirname(dest), exist_ok=True)
             shutil.move(src, dest)
             print(f"Backed up: {file}")
         else:
             print(f"Backup file not found: {file}")
+else:
+    print("\nSTEP 2: Backup step skipped.")
 
 # ---- STEP 3: ADDING FILES (MOVE) ----
 if adding_flag == "Y":
-    # source for adding = zip input if zip=N, else already extracted folder not needed
-    source_root = os.path.dirname(zip_input) if zip_flag == "N" else None
+    print("\nSTEP 3: Adding files...")
+    # source_root = zip input folder if zip=N else original folder
+    source_root = os.path.dirname(zip_input) if zip_flag == "N" else extract_to
 
     for file in adding_files:
         file = file.strip()
@@ -80,5 +96,7 @@ if adding_flag == "Y":
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         shutil.move(src, dest)
         print(f"Added: {file}")
+else:
+    print("\nSTEP 3: Adding step skipped.")
 
-print("✔ All 3 steps executed successfully!")
+print("\n✔ All 3 steps executed successfully!")
