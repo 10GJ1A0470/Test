@@ -15,6 +15,7 @@ for _, row in df.iterrows():
     action = str(row['Action']).strip()
     reqs[action] = str(row['Requirement']).strip()
     inputs[action] = str(row['Inputs']).strip()
+
 print("Excel data loaded.")
 print(f"Actions to perform: {reqs}")
 print(f"Inputs provided: {inputs}")
@@ -60,6 +61,7 @@ if zip_flag == "Y":
         print(f"Moved {item} to {target_path}")
 else:
     print("\nSTEP 1: Zip step skipped.")
+    extract_to = None  # no extraction done
 
 # ---- STEP 2: BACKUP FILES (MOVE) ----
 if backup_flag == "Y":
@@ -81,8 +83,8 @@ else:
 # ---- STEP 3: ADDING FILES (MOVE) ----
 if adding_flag == "Y":
     print("\nSTEP 3: Adding files...")
-    # source_root = zip input folder if zip=N else original folder
-    source_root = os.path.dirname(zip_input) if zip_flag == "N" else extract_to
+    # Correct logic: if zip done, use extract_to; else use zip_input folder
+    source_root = extract_to if zip_flag == "Y" else os.path.dirname(zip_input)
 
     for file in adding_files:
         file = file.strip()
