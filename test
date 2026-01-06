@@ -32,6 +32,8 @@ backup_files = inputs.get("Backup_files", "").split(",")
 adding_flag = reqs.get("Adding_files")
 adding_files = inputs.get("Adding_files", "").split(",")
 
+extract_to = None  # default, will set if zip is done
+
 # ---- STEP 1: ZIP unzip & MOVE ----
 if zip_flag == "Y":
     print(f"\nSTEP 1: Unzipping {zip_input}")
@@ -61,7 +63,6 @@ if zip_flag == "Y":
         print(f"Moved {item} to {target_path}")
 else:
     print("\nSTEP 1: Zip step skipped.")
-    extract_to = None  # no extraction done
 
 # ---- STEP 2: BACKUP FILES (MOVE) ----
 if backup_flag == "Y":
@@ -83,8 +84,11 @@ else:
 # ---- STEP 3: ADDING FILES (MOVE) ----
 if adding_flag == "Y":
     print("\nSTEP 3: Adding files...")
-    # Correct logic: if zip done, use extract_to; else use zip_input folder
-    source_root = extract_to if zip_flag == "Y" else os.path.dirname(zip_input)
+    # Rendu Y unte kuda adding files work avvali
+    if zip_flag == "Y" and extract_to:
+        source_root = extract_to
+    else:
+        source_root = os.path.dirname(zip_input)
 
     for file in adding_files:
         file = file.strip()
