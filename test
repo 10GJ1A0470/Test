@@ -1,17 +1,31 @@
-C:\Users\GYellap1\workflows>"C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\Omega\PAK\Omega Flow Chart.drawio.html"
-
-C:\Users\GYellap1\workflows>"C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\Optimus" "C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\Pharma" "C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\Omega"
-'"C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\Optimus"' is not recognized as an internal or external command,
-operable program or batch file.
-
-C:\Users\GYellap1\workflows>"C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\AtomSP" "C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\CSU" "C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\AtomDP"
-'"C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\AtomSP"' is not recognized as an internal or external command,
-operable program or batch file.
-
 C:\Users\GYellap1\workflows>git status
 On branch main
 Your branch is up to date with 'origin/main'.
 
-nothing to commit, working tree clean
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        AtomDP/
+        AtomSP/
+        CSU/
+        Omega/
+        Optimus/
+        Pharma/
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+C:\Users\GYellap1\workflows>git add .
+warning: in the working copy of 'AtomDP/AtomDP Flowchart.drawio.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AtomSP/Agent/Agent Start Automation.drawio.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AtomSP/PAK/AtomSP flow chart.drawio.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'CSU/CSU_PAK_Workflow.drawio.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Omega/Agent/Agent Start Automation.drawio.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Omega/PAK/Omega Flow Chart.drawio.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Optimus/Agent/Agent Start Automation.drawio.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Optimus/Agent/log_2025-05-30_09-56-46.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Optimus/Automation/Agent/log/log_2025-05-30_09-49-46.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Optimus/Automation/Agent/log/log_2025-05-30_09-53-43.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Optimus/Automation/Agent/log/log_2025-05-30_09-56-46.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Optimus/PAK/Optimus Flowchart.drawio.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Pharma/Pharma_PAK_Workflow.drawio.html', LF will be replaced by CRLF the next time Git touches it
 
 C:\Users\GYellap1\workflows>
