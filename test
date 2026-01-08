@@ -1,16 +1,21 @@
-C:\Users\GYellap1\workflows>git clone https://sourcecode.jnj.com/scm/asx-jjms/workflows.git
+C:\Users\GYellap1\workflows>cd ..
+
+C:\Users\GYellap1>rmdir /s workflows
+workflows, Are you sure (Y/N)? Y
+
+C:\Users\GYellap1>git clone https://sourcecode.jnj.com/scm/asx-jjms/workflows.git
 Cloning into 'workflows'...
 remote: Enumerating objects: 3, done.
 remote: Counting objects: 100% (3/3), done.
 remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
 Receiving objects: 100% (3/3), done.
 
+C:\Users\GYellap1>cd workflows
+
 C:\Users\GYellap1\workflows>git status
 On branch main
 Your branch is up to date with 'origin/main'.
 
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        workflows/
+nothing to commit, working tree clean
 
-nothing added to commit but untracked files present (use "git add" to track)
+C:\Users\GYellap1\workflows>
