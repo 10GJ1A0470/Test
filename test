@@ -1,112 +1,14 @@
-import os
-import shutil
-import zipfile
-import pandas as pd
-from datetime import datetime
+C:\Users\GYellap1>git clone https://sourcecode.jnj.com/scm/asx-jjms/workflows.git
+Cloning into 'workflows'...
+fatal: Bitbucket DC OAuth Client ID must be defined
+Username for 'https://sourcecode.jnj.com': gyellap1
+Password for 'https://gyellap1@sourcecode.jnj.com':
+remote: Enumerating objects: 3, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (3/3), done.
 
-# Helper function for timestamped prints
-def log(msg):
-    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {msg}")
+C:\Users\GYellap1>git status
+fatal: not a git repository (or any of the parent directories): .git
 
-# ---- Read Excel ----
-excel_file = r"PAK_Standard_requirement.xlsx"
-log(f"Reading Excel file: {excel_file}")
-df = pd.read_excel(excel_file, sheet_name="Sheet3")
-
-inputs = {}
-reqs = {}
-
-for _, row in df.iterrows():
-    action = str(row['Action']).strip()
-    reqs[action] = str(row['Requirement']).strip()
-    inputs[action] = str(row['Inputs']).strip()
-
-log("Excel data loaded.")
-log(f"Actions to perform: {reqs}")
-log(f"Inputs provided: {inputs}")
-
-# ---- Extract flags and inputs ----
-zip_flag = reqs.get("zip_path")
-zip_input = inputs.get("zip_path")
-
-target_path = inputs.get("Target_path")
-backup_path = inputs.get("Backup_path")
-
-backup_flag = reqs.get("Backup_files")
-backup_files = [f.strip() for f in inputs.get("Backup_files", "").split(",")]
-
-adding_flag = reqs.get("Adding_files")
-adding_files = [f.strip() for f in inputs.get("Adding_files", "").split(",")]
-
-extract_to = None  # temp_extract folder if zip happens
-
-# ---- STEP 1: ZIP unzip & MOVE ----
-if zip_flag == "Y":
-    log(f"STEP 1: Unzipping {zip_input}")
-    extract_to = os.path.join(os.path.dirname(zip_input), "temp_extract")
-
-    if os.path.exists(extract_to):
-        log(f"Cleaning existing temp folder: {extract_to}")
-        shutil.rmtree(extract_to)
-
-    with zipfile.ZipFile(zip_input, 'r') as zip_ref:
-        zip_ref.extractall(extract_to)
-        log(f"Extracted zip to: {extract_to}")
-
-    for item in os.listdir(extract_to):
-        src = os.path.join(extract_to, item)
-        dest = os.path.join(target_path, item)
-
-        if os.path.exists(dest):
-            if os.path.isdir(dest):
-                shutil.rmtree(dest)
-                log(f"Removed existing directory at target: {dest}")
-            else:
-                os.remove(dest)
-                log(f"Removed existing file at target: {dest}")
-
-        shutil.move(src, dest)
-        log(f"Moved {item} to {target_path}")
-else:
-    log("STEP 1: Zip step skipped.")
-
-# ---- STEP 2: BACKUP FILES ----
-if backup_flag == "Y":
-    log("STEP 2: Backing up files...")
-    for file in backup_files:
-        src = os.path.join(target_path, file)
-        dest = os.path.join(backup_path, file)
-
-        if os.path.exists(src):
-            os.makedirs(os.path.dirname(dest), exist_ok=True)
-            shutil.move(src, dest)
-            log(f"Backed up: {file}")
-        else:
-            log(f"Backup file not found: {file}")
-else:
-    log("STEP 2: Backup step skipped.")
-
-# ---- STEP 3: ADDING FILES ----
-if adding_flag == "Y":
-    log("STEP 3: Adding files...")
-
-    # Always use the folder where Adding files actually exist
-    source_root = os.path.dirname(zip_input)
-
-    for file in adding_files:
-        src = os.path.join(source_root, file)
-        dest = os.path.join(target_path, file)
-
-        log(f"Looking for file at: {src}")
-
-        if not os.path.exists(src):
-            log(f"Adding file not found: {file}")
-            continue
-
-        os.makedirs(os.path.dirname(dest), exist_ok=True)
-        shutil.move(src, dest)
-        log(f"Added: {file}")
-else:
-    log("STEP 3: Adding step skipped.")
-
-log("✔ All 3 steps executed successfully!")
+C:\Users\GYellap1>
