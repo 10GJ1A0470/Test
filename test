@@ -1,16 +1,12 @@
-C:\Users\GYellap1\workflows>cd ..
+C:\Users\GYellap1\workflows>"C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\Omega\PAK\Omega Flow Chart.drawio.html"
 
-C:\Users\GYellap1>rmdir /s workflows
-workflows, Are you sure (Y/N)? Y
+C:\Users\GYellap1\workflows>"C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\Optimus" "C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\Pharma" "C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\Omega"
+'"C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\Optimus"' is not recognized as an internal or external command,
+operable program or batch file.
 
-C:\Users\GYellap1>git clone https://sourcecode.jnj.com/scm/asx-jjms/workflows.git
-Cloning into 'workflows'...
-remote: Enumerating objects: 3, done.
-remote: Counting objects: 100% (3/3), done.
-remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
-Receiving objects: 100% (3/3), done.
-
-C:\Users\GYellap1>cd workflows
+C:\Users\GYellap1\workflows>"C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\AtomSP" "C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\CSU" "C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\AtomDP"
+'"C:\Users\GYellap1\OneDrive - JNJ\Automation\OMP\new\New\AtomSP"' is not recognized as an internal or external command,
+operable program or batch file.
 
 C:\Users\GYellap1\workflows>git status
 On branch main
