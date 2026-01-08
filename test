@@ -1,18 +1,1 @@
-C:\Users\GYellap1\workflows>git push origin main
-Enumerating objects: 241, done.
-Counting objects: 100% (241/241), done.
-Delta compression using up to 4 threads
-Compressing objects: 100% (237/237), done.
-Writing objects: 100% (240/240), 362.54 KiB | 1.87 MiB/s, done.
-Total 240 (delta 71), reused 0 (delta 0), pack-reused 0
-remote: Resolving deltas: 100% (71/71), done.
-remote:
-remote: Commits do not meet the Jira issues requirement.
-remote: No Jira issues found in the following commits:
-remote: d430b821ca0 Added workflow HTML files for all env
-remote:
-To https://sourcecode.jnj.com/scm/asx-jjms/workflows.git
- ! [remote rejected] main -> main (pre-receive hook declined)
-error: failed to push some refs to 'https://sourcecode.jnj.com/scm/asx-jjms/workflows.git'
 
-C:\Users\GYellap1\workflows>
