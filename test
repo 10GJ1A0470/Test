@@ -1,44 +1,38 @@
 # ---------------- CONFIGURATION ----------------
 $ExpectedAgents = @(
     "OMP_JNJ_MD_ATOMSP_DEV5_utl",
-    "OMP_JNJ_MD_ATOMSP_DEV_utl",
+	"OMP_JNJ_MD_ATOMSP_DEV_utl",
     "OMP_JNJ_MD_ATOMSP_TRN_utl",
     "OMP_JNJ_MD_ATOMSP_PREDEV5_utl",
-    "OMP_JNJ_MD_ATOM_LAB_utl"
+	"OMP_JNJ_MD_ATOM_LAB_utl"
 )
 
 # Mapping: DB batch (.bat) and start script (.py)
 $AgentScripts = @{
-    "OMP_JNJ_MD_ATOMSP_DEV_utl"     = @{ DB="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
-    "OMP_JNJ_MD_ATOMSP_DEV5_utl"    = @{ DB="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
-    "OMP_JNJ_MD_ATOMSP_TRN_utl"     = @{ DB="\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\Automation\Agent\DB Script\TRN\dbbat_update.bat"; Start="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
-    "OMP_JNJ_MD_ATOMSP_PREDEV5_utl" = @{ DB="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
-    "OMP_JNJ_MD_ATOM_LAB_utl"       = @{ DB="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
+    "OMP_JNJ_MD_ATOMSP_DEV_utl"    = @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
+    "OMP_JNJ_MD_ATOMSP_DEV5_utl"   = @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
+    "OMP_JNJ_MD_ATOMSP_TRN_utl"    = @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\Automation\Agent\DB Script\TRN\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
+    "OMP_JNJ_MD_ATOMSP_PREDEV5_utl"= @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
+	"OMP_JNJ_MD_ATOM_LAB_utl"    = @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
 }
 
-# Python
+# Python executable path
 $PythonExe = "C:\Users\SA-ITS-APSMDAUT-NPD\AppData\Local\Programs\Python\Python313\python.exe"
-
-# DB status
 $dbStatusFile = "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\Automation\Agent\AWSDMKNVAW0002\log\db_status.txt"
 
-# OUT backup paths
-$OutSourcePath = "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\out"
-$OutBackupPath = "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\out_backup"
-
-# Email
+# SMTP / Email
 $SmtpServer = "SMTP.EU.JNJ.COM"
 $From = "SA-ITS-APSMDAUT-LAB@its.jnj.com"
 $ToInitial = "GYELLAP1@its.jnj.com"
 $ToEPPS = "GYELLAP1@its.jnj.com"
 
-# Logging
+# Base log folder & filename
 $LogFolder = "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\Automation\Agent\AWSDMKNVAW0002\log"
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $LogPath = Join-Path $LogFolder "agent_health_log_$timestamp.txt"
 
 $ReminderCount = 3
-$ReminderIntervalSeconds = 300
+$ReminderIntervalSeconds = 300  # 5 minutes
 
 # ---------------- FUNCTIONS ----------------
 function Write-Log {
@@ -51,7 +45,7 @@ function Write-Log {
 
 function Build-HTMLReport {
     param($Title, $Agents, $DownAgents)
-    $HostName = $env:COMPUTERNAME
+	$HostName = $env:COMPUTERNAME
     $html = "<html><body><h2>$Title</h2><h3>Host: $HostName</h3><table border='1'>"
     foreach ($a in $Agents) {
         if ($DownAgents -contains $a) {
@@ -66,61 +60,87 @@ function Build-HTMLReport {
 
 function Send-EmailHtml {
     param($Subject, $HtmlBody, $Recipients)
+    if ([string]::IsNullOrWhiteSpace($Recipients)) {
+        Write-Log "ERROR: No recipients specified for email: $Subject"
+        return
+    }
     Send-MailMessage -From $From -To $Recipients -Subject $Subject -Body $HtmlBody -SmtpServer $SmtpServer -BodyAsHtml
-    Write-Log "Email sent: $Subject"
+    Write-Log "Email sent to ${Recipients}: ${Subject}"
 }
 
-# 🔥 BACKUP FUNCTION (COPY .out FILES)
-function Backup-OutFiles {
-    param($SourcePath, $BackupPath)
-
-    if (-not (Test-Path $SourcePath)) {
-        Write-Log "Backup skipped. Source path missing: $SourcePath"
-        return
-    }
-
-    if (-not (Test-Path $BackupPath)) {
-        New-Item -ItemType Directory -Path $BackupPath -Force | Out-Null
-        Write-Log "Backup directory created: $BackupPath"
-    }
-
-    $files = Get-ChildItem $SourcePath -Filter "*.out" -File -ErrorAction SilentlyContinue
-    if ($files.Count -eq 0) {
-        Write-Log "No .out files found to backup."
-        return
-    }
-
-    foreach ($f in $files) {
-        try {
-            Copy-Item $f.FullName (Join-Path $BackupPath $f.Name) -Force
-            Write-Log "Copied .out file: $($f.Name)"
-        } catch {
-            Write-Log "ERROR copying $($f.Name): $_"
-        }
-    }
-}
 
 function Run-DbBatch {
     param($Path)
-    if (-not (Test-Path $Path)) { Write-Log "DB batch not found"; return $false }
+    
+    if (-not (Test-Path $Path)) { 
+        Write-Log "DB batch not found: $Path"
+        return $false 
+    }
 
+    # Load encrypted password
     $SecurePass = Get-Content "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\Automation\Agent\devdbpass.txt" | ConvertTo-SecureString
-    $PlainPass = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
-        [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePass)
-    )
+    $PlainPass  = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
+                    [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePass)
+                  )
 
-    Start-Process -FilePath $Path -ArgumentList $PlainPass -NoNewWindow
-    Start-Sleep -Seconds 5
-    return $true
+    Write-Log "Running DB batch via CMD (timeout 60s): $Path"
+
+    $proc = Start-Process -FilePath $Path `
+                      -ArgumentList $PlainPass `
+                      -PassThru -NoNewWindow -ErrorAction SilentlyContinue
+
+    # Wait max 60 seconds for db_status.txt to appear
+    $dbStatusFile = Join-Path (Split-Path $Path) "db_status.txt"
+    $stopwatch = [Diagnostics.Stopwatch]::StartNew()
+    while (-not (Test-Path $dbStatusFile) -and $stopwatch.Elapsed.TotalSeconds -lt 20) {
+        Start-Sleep -Seconds 2
+    }
+    $stopwatch.Stop()
+
+    if (Test-Path $dbStatusFile) {
+        Write-Log "----- DB Script Output Start -----"
+        Get-Content $dbStatusFile | ForEach-Object { Write-Log $_ }
+        Write-Log "----- DB Script Output End -----"
+        return $true
+    }
+    else {
+        Write-Log "ERROR: db_status.txt not created within 60 seconds. Possible DB login/password issue."
+
+        $HostName = $env:COMPUTERNAME
+        $HtmlBody = "<h2 style='color:red'>CRITICAL: DB Login Timeout</h2>
+        <p style='color:red'>Failed to Login DB/Remove Inactive Lock Sessions on $HostName.<br/>
+        Please check DB password and login issues.</p>"
+        Send-EmailHtml -Subject "CRITICAL: DB Login Timeout on $HostName" -HtmlBody $HtmlBody -Recipients $ToInitial
+
+        Write-Log "DB login timeout. Stopping script."
+        exit 1   # terminate script
+    }
 }
+
+
+
 
 function Run-PythonStart {
     param($PyPath)
-    & $PythonExe "`"$PyPath`"" 2>&1 | ForEach-Object { Write-Log "[PY] $_" }
+    if (-not (Test-Path $PyPath)) { Write-Log "Python script not found: $PyPath"; return $false }
+    if (-not (Test-Path $PythonExe)) { Write-Log "Python executable not found: $PythonExe"; return $false }
+    Write-Log "Running Python start: $PyPath"
+    
+    $output = & $PythonExe "`"$PyPath`"" 2>&1
+    $output | ForEach-Object { Write-Log "[PY] $_" }
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Log "Python script completed successfully."
+        return $true
+    } else {
+        Write-Log "Python script failed with exit code $LASTEXITCODE."
+        return $false
+    }
 }
 
 function Check-Agents {
     param($Agents)
+
     $cmdLines = wmic process where "name like '%ompeditor%'" get CommandLine /VALUE |
         Select-String "^CommandLine=" | ForEach-Object {
             $_.ToString().Replace("CommandLine=", "").Trim()
@@ -128,23 +148,32 @@ function Check-Agents {
 
     $down = @()
     foreach ($a in $Agents) {
-        if (-not ($cmdLines -match [regex]::Escape($a))) {
-            $down += $a
+        $matched = $false
+        foreach ($c in $cmdLines) {
+            if ($c -match "/database=\{.*$([regex]::Escape($a)).*\}") {
+                $matched = $true
+                break
+            }
         }
+        if (-not $matched) { $down += $a }
     }
 
-    return @{
-        DownAgents = $down
-        Html = Build-HTMLReport "Agent Status Report" $Agents $down
-    }
+    $html = Build-HTMLReport -Title "Agent Status Report" -Agents $Agents -DownAgents $down
+    return @{ DownAgents = $down; Html = $html }
 }
 
 # ---------------- MAIN ----------------
-Write-Log "Starting Agent Health Check"
+Write-Log "Starting Agent Health check..."
 
-if (Test-Path $dbStatusFile) { Remove-Item $dbStatusFile -Force }
+# Always delete old db_status.txt before fresh run
 
-$initial = Check-Agents $ExpectedAgents
+if (Test-Path $dbStatusFile) {
+    Remove-Item $dbStatusFile -Force -ErrorAction SilentlyContinue
+    Write-Log "Old db_status.txt deleted."
+}
+
+# Initial check
+$initial = Check-Agents -Agents $ExpectedAgents
 $downAgents = $initial.DownAgents
 
 if ($downAgents.Count -eq 0) {
@@ -152,28 +181,56 @@ if ($downAgents.Count -eq 0) {
     exit 0
 }
 
-# 🔥 BACKUP IMMEDIATELY WHEN DOWN DETECTED
-Write-Log "Agents DOWN detected. Starting OUT file backup."
-Backup-OutFiles -SourcePath $OutSourcePath -BackupPath $OutBackupPath
+$HostName = $env:COMPUTERNAME
+Send-EmailHtml -Subject "ALERT: Agents DOWN on $HostName - $(Get-Date -Format 'yyyy-MM-dd HH:mm')" -HtmlBody $initial.Html -Recipients $ToInitial
 
-Send-EmailHtml "ALERT: Agents DOWN on $env:COMPUTERNAME" $initial.Html $ToInitial
-
+# --- First remediation attempt ---
 foreach ($agent in $downAgents) {
-    Run-DbBatch $AgentScripts[$agent].DB
-    Run-PythonStart $AgentScripts[$agent].Start
+    Write-Log "First remediation attempt for $agent"
+    Run-DbBatch -Path $AgentScripts[$agent].DB | Out-Null
+    Run-PythonStart -PyPath $AgentScripts[$agent].Start | Out-Null
+	Write-Log "Waiting 20 seconds before consolidated check..."
     Start-Sleep -Seconds 20
 }
 
-$afterFix = Check-Agents $ExpectedAgents
-if ($afterFix.DownAgents.Count -eq 0) {
-    Send-EmailHtml "INFO: All agents UP after remediation" $afterFix.Html $ToInitial
+# --- Second consolidated check ---
+write-log "Agent Health check after first remediation"
+$afterFirstRem = Check-Agents -Agents $ExpectedAgents
+$stillDown1 = $afterFirstRem.DownAgents
+
+if ($stillDown1.Count -eq 0) {
+    # All agents UP after first remediation
+    $HostName = $env:COMPUTERNAME
+    Send-EmailHtml -Subject "INFO: All agents UP after first remediation on $HostName" -HtmlBody $afterFirstRem.Html -Recipients $ToInitial
+    Write-Log "All agents UP after first remediation. Exiting."
     exit 0
 }
 
-for ($i=1; $i -le $ReminderCount; $i++) {
-    Send-EmailHtml "REMINDER [$i/$ReminderCount]: Agents still DOWN" $afterFix.Html $ToEPPS
-    Start-Sleep -Seconds $ReminderIntervalSeconds
+# --- Second remediation attempt (only still down agents) ---
+foreach ($agent in $stillDown1) {
+    Write-Log "Second remediation attempt for $agent"
+    Run-DbBatch -Path $AgentScripts[$agent].DB | Out-Null
+    Run-PythonStart -PyPath $AgentScripts[$agent].Start | Out-Null
+	Write-Log "Waiting 20 seconds before consolidated check..."
+    Start-Sleep -Seconds 20
 }
 
-Write-Log "Agent Health Check Finished"
+# --- WAIT before 3rd check ---
+#Write-Log "Waiting 20 seconds before third consolidated check..."
+#Start-Sleep -Seconds 20
+
+# --- Third consolidated check ---
+$afterSecondRem = Check-Agents -Agents $ExpectedAgents
+$stillDown2 = $afterSecondRem.DownAgents
+
+# --- Consolidated reminders if still down ---
+if ($stillDown2.Count -gt 0) {
+    $remHtml = Build-HTMLReport -Title "CRITICAL: Some Agents STILL DOWN after 2 attempts" -Agents $ExpectedAgents -DownAgents $stillDown2
+    for ($i=1; $i -le $ReminderCount; $i++) {
+        Send-EmailHtml -Subject "REMINDER [$i/$ReminderCount]: Agents still DOWN on $HostName" -HtmlBody $remHtml -Recipients $ToEPPS
+        if ($i -lt $ReminderCount) { Start-Sleep -Seconds $ReminderIntervalSeconds }
+    }
+}
+
+Write-Log "Agent Health check finished."
 exit 0
