@@ -1,113 +1,31 @@
-# ---------------- CONFIGURATION ----------------
-$ExpectedAgents = @(
-    "OMP_JNJ_MD_ATOMSP_DEV5_utl",
-    "OMP_JNJ_MD_ATOMSP_DEV_utl",
-    "OMP_JNJ_MD_ATOMSP_TRN_utl",
-    "OMP_JNJ_MD_ATOMSP_PREDEV5_utl",
-    "OMP_JNJ_MD_ATOM_LAB_utl"
-)
-
-# Agent → DB batch & Python start mapping
-$AgentScripts = @{
-    "OMP_JNJ_MD_ATOMSP_DEV_utl"     = @{ DB="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
-    "OMP_JNJ_MD_ATOMSP_DEV5_utl"    = @{ DB="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
-    "OMP_JNJ_MD_ATOMSP_TRN_utl"     = @{ DB="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
-    "OMP_JNJ_MD_ATOMSP_PREDEV5_utl" = @{ DB="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
-    "OMP_JNJ_MD_ATOM_LAB_utl"       = @{ DB="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start="\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
-}
-
-# Agent → OUT file folders
-$outfile_path = @{
-    "OMP_JNJ_MD_ATOMSP_PREDEV5_utl" = "D:\OMClient\sppredev5\user\sa-its-apsmdint-dev1\dispatcher\Agent"
-    "OMP_JNJ_MD_ATOMSP_DEV5_utl"    = "D:\OMClient\spdevelopment5\user\SA-ITS-APSMDINT-DEV5\dispatcher\Agent"
-    "OMP_JNJ_MD_ATOMSP_DEV_utl"     = "D:\OMClient\spdevelopment\user\sa-its-apsmdint-dev1\dispatcher\Agent"
-    "OMP_JNJ_MD_ATOMSP_TRN_utl"     = "D:\OMClient\sptrn\user\SA-ITS-APSMDDINT-TRN\dispatcher\Agent"
-    "OMP_JNJ_MD_ATOM_LAB_utl"       = "D:\OMClient\sptrn\user\SA-ITS-APSMDINT-LAB\dispatcher\ManagementAction"
-}
-
-$BackupBasePath = "D:\OMPdump\FRM_Backup"
-$PythonExe = "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\python.exe"
-
-# Email
-$SmtpServer = "SMTP.EU.JNJ.COM"
-$From = "SA-ITS-APSMDINT-LAB@its.jnj.com"
-$ToInitial = "GYELLAP1@its.jnj.com"
-$ToEPPS = "GYELLAP1@its.jnj.com"
-
-# Logs
-$LogFolder = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\log"
-$LogPath = Join-Path $LogFolder "agent_health_$(Get-Date -Format yyyyMMdd_HHmmss).log"
-
-$ReminderCount = 3
-$ReminderIntervalSeconds = 300
-
-# ---------------- FUNCTIONS ----------------
-function Write-Log {
-    param($Message)
-    $line = "[{0}] {1}" -f (Get-Date -Format "yyyy-MM-dd HH:mm:ss"), $Message
-    $line | Tee-Object -FilePath $LogPath -Append
-}
-
-function Backup-OutFiles {
-    param($Agent)
-
-    $SourcePath = $outfile_path[$Agent]
-    if (-not (Test-Path $SourcePath)) {
-        Write-Log "WARNING: Outfile path not found for $Agent : $SourcePath"
-        return
-    }
-
-    $AgentBackupPath = Join-Path $BackupBasePath $Agent
-    if (-not (Test-Path $AgentBackupPath)) {
-        New-Item -ItemType Directory -Path $AgentBackupPath -Force | Out-Null
-        Write-Log "Created backup folder: $AgentBackupPath"
-    }
-
-    $files = Get-ChildItem $SourcePath -Filter "*.out" -File -ErrorAction SilentlyContinue
-    if ($files.Count -eq 0) {
-        Write-Log "No .out files found for $Agent"
-        return
-    }
-
-    foreach ($f in $files) {
-        Copy-Item $f.FullName (Join-Path $AgentBackupPath $f.Name) -Force
-        Write-Log "Backed up $($f.Name) for $Agent"
-    }
-}
-
-function Check-Agents {
-    param($Agents)
-    $cmdLines = wmic process where "name like '%ompeditor%'" get CommandLine /VALUE |
-        Select-String "^CommandLine=" | ForEach-Object { $_ -replace "CommandLine=", "" }
-
-    $down=@()
-    foreach ($a in $Agents) {
-        if (-not ($cmdLines -match [regex]::Escape($a))) { $down += $a }
-    }
-    return $down
-}
-
-# ---------------- MAIN ----------------
-Write-Log "Agent Health Check Started"
-
-$downAgents = Check-Agents $ExpectedAgents
-if ($downAgents.Count -eq 0) {
-    Write-Log "All agents running. Exit."
-    exit 0
-}
-
-foreach ($agent in $downAgents) {
-    Write-Log "Agent DOWN detected: $agent"
-    Backup-OutFiles -Agent $agent
-}
-
-Write-Log "Starting remediation steps"
-
-foreach ($agent in $downAgents) {
-    & $AgentScripts[$agent].DB | Out-Null
-    & $PythonExe $AgentScripts[$agent].Start | Out-Null
-    Start-Sleep 20
-}
-
-Write-Log "Agent Health Check Completed"
-exit 0
+Index operation failed; the array index evaluated to null.
+At line:60 char:5
++     $SourcePath = $outfile_path[$Agent]
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (:) [], RuntimeException
+    + FullyQualifiedErrorId : NullArrayIndex
+ 
+Test-Path : Cannot bind argument to parameter 'Path' because it is null.
+At line:61 char:25
++     if (-not (Test-Path $SourcePath)) {
++                         ~~~~~~~~~~~
+    + CategoryInfo          : InvalidData: (:) [Test-Path], ParameterBindingValidationException
+    + FullyQualifiedErrorId : ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.TestPathCommand
+ 
+Join-Path : Cannot bind argument to parameter 'Path' because it is null.
+At line:66 char:34
++     $AgentBackupPath = Join-Path $BackupBasePath $Agent
++                                  ~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidData: (:) [Join-Path], ParameterBindingValidationException
+    + FullyQualifiedErrorId : ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.JoinPathCommand
+ 
+Test-Path : Cannot bind argument to parameter 'Path' because it is null.
+At line:67 char:25
++     if (-not (Test-Path $AgentBackupPath)) {
++                         ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidData: (:) [Test-Path], ParameterBindingValidationException
+    + FullyQualifiedErrorId : ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.TestPathCommand
+ 
+[2026-01-20 07:19:26] No .out files found for 
+[2026-01-20 07:19:27] Email sent to GYELLAP1@its.jnj.com: ALERT: Agents DOWN on AWSDMKNVAW0002 - 2026-01-20 07:19
+[2026-01-20 07:19:27] First remediation attempt for OMP_JNJ_MD_ATOMSP_PREDEV5_utl
