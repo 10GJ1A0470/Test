@@ -1,67 +1,7 @@
-import os
-import zipfile
-import urllib.request
-import winreg
-import sys
-
-BASE_DIR = r"C:\Drivers\Edge"
-
-def get_edge_version():
-    paths = [
-        (winreg.HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Edge\BLBeacon"),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Edge\BLBeacon"),
-        (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\Microsoft\Edge\BLBeacon")
-    ]
-
-    for root, path in paths:
-        try:
-            key = winreg.OpenKey(root, path)
-            version, _ = winreg.QueryValueEx(key, "version")
-            print("Edge version found:", version)
-            return version
-        except FileNotFoundError:
-            continue
-
-    print("Edge version not found in registry")
-    sys.exit(1)
-
-def download_edge_driver():
-    edge_version = get_edge_version()
-    major = edge_version.split(".")[0]
-
-    driver_dir = os.path.join(BASE_DIR, major)
-    driver_exe = os.path.join(driver_dir, "msedgedriver.exe")
-
-    if os.path.exists(driver_exe):
-        print("Driver already exists at:", driver_exe)
-        return driver_exe
-
-    os.makedirs(driver_dir, exist_ok=True)
-
-    driver_url = "https://msedgedriver.azureedge.net/{}/edgedriver_win64.zip".format(edge_version)
-    zip_path = os.path.join(driver_dir, "edgedriver.zip")
-
-    print("Downloading driver from:")
-    print(driver_url)
-
-    try:
-        urllib.request.urlretrieve(driver_url, zip_path)
-    except Exception as e:
-        print("Driver download failed")
-        print(e)
-        sys.exit(1)
-
-    print("Extracting driver")
-
-    with zipfile.ZipFile(zip_path, "r") as zip_ref:
-        zip_ref.extractall(driver_dir)
-
-    os.remove(zip_path)
-
-    print("Driver ready at:", driver_exe)
-    return driver_exe
-
-if __name__ == "__main__":
-    print("Starting Edge driver auto setup")
-    driver_path = download_edge_driver()
-    print("Final driver path:", driver_path)
+C:\Windows\system32>python \\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\test.py
+Starting Edge driver auto setup
+Edge version found: 144.0.3719.82
+Downloading driver from:
+https://msedgedriver.azureedge.net/144.0.3719.82/edgedriver_win64.zip
+Driver download failed
+<urlopen error [Errno 11001] getaddrinfo failed>
