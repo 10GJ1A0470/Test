@@ -1,7 +1,1 @@
-C:\Windows\system32>python \\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\test.py
-Starting Edge driver auto setup
-Edge version found: 144.0.3719.82
-Downloading driver from:
-https://msedgedriver.azureedge.net/144.0.3719.82/edgedriver_win64.zip
-Driver download failed
-<urlopen error [Errno 11001] getaddrinfo failed>
+https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
