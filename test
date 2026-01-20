@@ -4,30 +4,30 @@ $ExpectedAgents = @(
 	"OMP_JNJ_MD_ATOMSP_DEV_utl",
     "OMP_JNJ_MD_ATOMSP_TRN_utl",
     "OMP_JNJ_MD_ATOMSP_PREDEV5_utl",
-	"OMP_JNJ_MD_ATOM_LAB_utl"
+	"OMP_JNJ_MD_ATOMSP_LAB_utl"
 )
 
 # Mapping: DB batch (.bat) and start script (.py)
 $AgentScripts = @{
     "OMP_JNJ_MD_ATOMSP_DEV_utl"    = @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
     "OMP_JNJ_MD_ATOMSP_DEV5_utl"   = @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
-    "OMP_JNJ_MD_ATOMSP_TRN_utl"    = @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\Automation\Agent\DB Script\TRN\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
+    "OMP_JNJ_MD_ATOMSP_TRN_utl"    = @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
     "OMP_JNJ_MD_ATOMSP_PREDEV5_utl"= @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
-	"OMP_JNJ_MD_ATOM_LAB_utl"    = @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
+	"OMP_JNJ_MD_ATOMSP_LAB_utl"    = @{ DB = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\ATOM_LAB_Test.py" }
 }
 
 # Python executable path
-$PythonExe = "C:\Users\SA-ITS-APSMDAUT-NPD\AppData\Local\Programs\Python\Python313\python.exe"
-$dbStatusFile = "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\Automation\Agent\AWSDMKNVAW0002\log\db_status.txt"
+$PythonExe = "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\python.exe"
+$dbStatusFile = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\db_status.txt"
 
 # SMTP / Email
 $SmtpServer = "SMTP.EU.JNJ.COM"
-$From = "SA-ITS-APSMDAUT-LAB@its.jnj.com"
+$From = "SA-ITS-APSMDINT-LAB@its.jnj.com"
 $ToInitial = "GYELLAP1@its.jnj.com"
 $ToEPPS = "GYELLAP1@its.jnj.com"
 
 # Base log folder & filename
-$LogFolder = "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\Automation\Agent\AWSDMKNVAW0002\log"
+$LogFolder = "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\log"
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $LogPath = Join-Path $LogFolder "agent_health_log_$timestamp.txt"
 
@@ -78,7 +78,7 @@ function Run-DbBatch {
     }
 
     # Load encrypted password
-    $SecurePass = Get-Content "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\Automation\Agent\devdbpass.txt" | ConvertTo-SecureString
+    $SecurePass = Get-Content "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\devdb_pass.txt" | ConvertTo-SecureString
     $PlainPass  = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
                     [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePass)
                   )
