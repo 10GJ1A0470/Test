@@ -297,3 +297,50 @@ if ($ReportPath) {
 }
 
 # End of script
+
+
+
+
+
+
+PS C:\Windows\system32> \\awsusdmkfsxn01.jnj.com\mdd_qa_omp\Automation_Scripts\Atom_SPQA_Scripts\PAK\SPDEV5\Remove_Active_Users5.ps1
+2026-01-20 23:23:33,245 - [DEBUG] Reading input file: \\awsusdmkfsxn01.jnj.com\mdd_qa_omp\Automation_Scripts\Atom_SPQA_Scripts\PAK\SPDEV5\log\servers.txt
+2026-01-20 23:23:33,292 - [DEBUG] Total lines read: 2
+2026-01-20 23:23:33,627 - [DEBUG] Host Machine: AWSDMKNVAW000E
+2026-01-20 23:23:33,627 - [DEBUG] Host OSUSER : SA-ITS-APSMDAUT-NPD
+2026-01-20 23:23:33,627 - [DEBUG] DryRun Mode : False
+
+=============================
+2026-01-20 23:23:33,643 - [DEBUG] Processing MACHINE: CPC-MZida-DTHPF.wks.jnj.com
+2026-01-20 23:23:33,643 - [DEBUG] Target OSUSER     : MZidane1
+2026-01-20 23:23:33,643 - [DEBUG] Target SCHEMATIC  : OMP_JNJ_MD_ATOMSP_DEV5_OPR
+2026-01-20 23:23:33,736 - [WARN] WinRM unavailable for CPC-MZida-DTHPF.wks.jnj.com: WinRM cannot process the request. The following error occurred while using Kerberos authentication
+: Cannot find the computer CPC-MZida-DTHPF.wks.jnj.com. Verify that the computer exists on the network and that the name provided is spelled correctly.. Falling back to DCOM...
+2026-01-20 23:23:54,788 - [ERROR] Failed to query CPC-MZida-DTHPF.wks.jnj.com: RPC unavailable (HRESULT 0x800706BA). Check DCOM/WMI services or firewall, or prefer WinRM with FQDN.
+
+=============================
+2026-01-20 23:23:54,788 - [DEBUG] Processing MACHINE: awsdmknvaw000e.jnj.com
+2026-01-20 23:23:54,788 - [DEBUG] Target OSUSER     : SA-ITS-APSMDAUT-NPD
+2026-01-20 23:23:54,788 - [DEBUG] Target SCHEMATIC  : OMP_JNJ_MD_ATOMSP_DEV5_UTL
+2026-01-20 23:23:54,850 - [DEBUG] Using WinRM (Kerberos) for awsdmknvaw000e.jnj.com
+2026-01-20 23:23:54,850 - [DEBUG] Querying processes on awsdmknvaw000e.jnj.com ...
+2026-01-20 23:23:58,970 - [INFO] MATCH: jnj\sa-its-apsmdaut-npd running schematic 'OMP_JNJ_MD_ATOMSP_DEV5_UTL' (PID: 12004)
+2026-01-20 23:23:58,970 - [DEBUG] CMD: "D:\OMClient\bin\ommenu_09_09_023_x64u\ommenu_09_09_023_x64u.exe"  "\\awsusdmkfsxn01.jnj.com\mdd_dev5_omp\OMP_JNJ_MD_ATOMSP_DEV5\OMPartners\spd
+evelopment5\bin\menu\base\OMPartners.men" "/TITLE={OMP Plus - spdevelopment5}" "/customerlogo=\\awsusdmkfsxn01.jnj.com\mdd_dev5_omp\OMP_JNJ_MD_ATOMSP_DEV5\OMPartners\spdevelopment5\b
+in\customerlogo.png" /NOSPLASH "/cudir=\\awsusdmkfsxn01.jnj.com\mdd_dev5_omp\OMP_JNJ_MD_ATOMSP_DEV5\OMPartners\spdevelopment5\bin" "/archivefiles=*.*" "/logdir=\\awsusdmkfsxn01.jnj.c
+om\mdd_dev5_omp\OMP_JNJ_MD_ATOMSP_DEV5\OMPartners\omdata\spdevelopment5\user\SA-ITS-APSMDAUT-NPD\OMMenu" 
+[PID KILLED] 12004 on awsdmknvaw000e.jnj.com
+2026-01-20 23:23:59,002 - [INFO] MATCH: jnj\sa-its-apsmdaut-npd running schematic 'OMP_JNJ_MD_ATOMSP_DEV5_UTL' (PID: 18564)
+2026-01-20 23:23:59,002 - [DEBUG] CMD: C:\Windows\system32\cmd.exe /c ""\\awsusdmkfsxn01.jnj.com\mdd_dev5_omp\OMP_JNJ_MD_ATOMSP_DEV5\OMPartners\spdevelopment5\datachangemanager\scrip
+t\Install_Build.cmd" "/SET_DCMVariablesToPersist=SCI,SCIEXE,DCMSCIEXE,EXEANDPAKSOURCEFOLDER,OMLICENSEPATH,OMEXEFLAVOR,OMCIPHERPATH,DISPATCHERTRANSFERDIR" "%UPDINST_ExtraArguments%" "
+/logdir=\\awsusdmkfsxn01.jnj.com\mdd_dev5_omp\OMP_JNJ_MD_ATOMSP_DEV5\OMPartners\omdata\spdevelopment5\user\SA-ITS-APSMDAUT-NPD\datachangemanager" "/SPECIALCONFIGBUILDFOLDER=\\awsusdm
+kfsxn01.jnj.com\mdd_dev5_omp\OMPInstallpoint\R06_09\Solutions\JnJ_GlobalOrtho\customerpak"                             "/CONFIGBUILDNAME={OM_CUSTOMERPROJECTBUILD}" "/SET_DCMFindExeAn
+dPaks=NO""
+[PID KILLED] 18564 on awsdmknvaw000e.jnj.com
+2026-01-20 23:23:59,033 - [WARN] Could not read owner for PID 11464 on awsdmknvaw000e.jnj.com: No instance found with given property values. 
+2026-01-20 23:23:59,261 - [WARN] Could not read owner for PID 11756 on awsdmknvaw000e.jnj.com: No instance found with given property values. 
+
+[COMPLETED] Process scan and cleanup finished!
+[SUMMARY] Killed PIDs:
+ - PID 12004 on awsdmknvaw000e.jnj.com (User: jnj\sa-its-apsmdaut-npd)
+ - PID 18564 on awsdmknvaw000e.jnj.com (User: jnj\sa-its-apsmdaut-npd)
