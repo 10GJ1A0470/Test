@@ -1,129 +1,27 @@
-param(
-    [string]$InputPath  = "\\awsusdmkfsxn01.jnj.com\mdd_qa_omp\Automation_Scripts\Atom_SPQA_Scripts\PAK\SPDEV5\log\servers.txt",
-    [bool]  $DryRun      = $false,
-    [pscredential]$Credential = $null
-)
+PS C:\Windows\system32> \\awsusdmkfsxn01.jnj.com\mdd_qa_omp\Automation_Scripts\Atom_SPQA_Scripts\PAK\SPDEV5\Remove_Active_Users6.ps1
+Cannot overwrite variable Host because it is read-only or constant.
+At \\awsusdmkfsxn01.jnj.com\mdd_qa_omp\Automation_Scripts\Atom_SPQA_Scripts\PAK\SPDEV5\Remove_Active_Users6.ps1:24 char:5
++     $host = $Raw -replace '^.*\\',''
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (Host:String) [], SessionStateUnauthorizedAccessException
+    + FullyQualifiedErrorId : VariableNotWritable
+ 
+Cannot overwrite variable Host because it is read-only or constant.
+At \\awsusdmkfsxn01.jnj.com\mdd_qa_omp\Automation_Scripts\Atom_SPQA_Scripts\PAK\SPDEV5\Remove_Active_Users6.ps1:24 char:5
++     $host = $Raw -replace '^.*\\',''
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (Host:String) [], SessionStateUnauthorizedAccessException
+    + FullyQualifiedErrorId : VariableNotWritable
+ 
 
-# ==========================
-# Logging
-# ==========================
-function Write-Log {
-    param($Message,$Level="INFO",$Color="White")
-    $ts = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss,fff")
-    Write-Host "$ts - [$Level] $Message" -ForegroundColor $Color
-}
+=============================
+2026-01-20 23:43:24,008 - [INFO] Processing System.Management.Automation.Internal.Host.InternalHost
+2026-01-20 23:43:24,008 - [ERROR] Machine unreachable: System.Management.Automation.Internal.Host.InternalHost
 
-function Test-IsIPAddress {
-    param([string]$Text)
-    $ip=$null
-    [System.Net.IPAddress]::TryParse($Text,[ref]$ip)
-}
+=============================
+2026-01-20 23:43:24,008 - [INFO] Processing System.Management.Automation.Internal.Host.InternalHost
+2026-01-20 23:43:24,024 - [ERROR] Machine unreachable: System.Management.Automation.Internal.Host.InternalHost
 
-function Normalize-MachineName {
-    param($Raw)
-    $host = $Raw -replace '^.*\\',''
-    if (Test-IsIPAddress $host) { return $host }
-    if ($host -match '\.') { return $host }
-    try {
-        (Resolve-DnsName $host -ErrorAction Stop | Select-Object -First 1).Name
-    } catch { $host }
-}
+[COMPLETED] Script execution finished
 
-function New-TargetCimSession {
-    param($ComputerName,$Cred)
-    try {
-        $opt = New-CimSessionOption -Protocol Wsman
-        if ($Cred) { return New-CimSession -ComputerName $ComputerName -Credential $Cred -SessionOption $opt -ErrorAction Stop }
-        else { return New-CimSession -ComputerName $ComputerName -SessionOption $opt -ErrorAction Stop }
-    } catch {
-        $opt = New-CimSessionOption -Protocol Dcom
-        if ($Cred) { return New-CimSession -ComputerName $ComputerName -Credential $Cred -SessionOption $opt -ErrorAction Stop }
-        else { return New-CimSession -ComputerName $ComputerName -SessionOption $opt -ErrorAction Stop }
-    }
-}
-
-# ==========================
-# Read input
-# ==========================
-$data = Get-Content $InputPath
-$entries = foreach ($line in $data) {
-    if ([string]::IsNullOrWhiteSpace($line)) { continue }
-    $p = $line -split '\s+'
-    [PSCustomObject]@{
-        SCHEMATIC = $p[0]
-        OSUSER    = $p[1]
-        MACHINE   = Normalize-MachineName $p[2]
-    }
-}
-
-# ==========================
-# Main
-# ==========================
-foreach ($e in $entries) {
-
-    Write-Host "`n=============================" -ForegroundColor DarkGray
-    Write-Log "Processing $($e.MACHINE)" "INFO" "Cyan"
-
-    try {
-        $sess = New-TargetCimSession $e.MACHINE $Credential
-        $procs = Get-CimInstance Win32_Process -CimSession $sess
-
-        $schem = ($e.SCHEMATIC -replace '_UTL$','')
-        $regex = [regex]::Escape($schem)
-        $processKilled = $false
-
-        foreach ($p in $procs) {
-            try {
-                $o = Invoke-CimMethod $p GetOwner -CimSession $sess
-                if ($o.User -and $o.User.ToLower() -eq $e.OSUSER.ToLower()) {
-                    if ($p.CommandLine -match $regex) {
-
-                        Write-Log "MATCH PID $($p.ProcessId) attempting kill" "INFO" "Green"
-
-                        try {
-                            $r = Invoke-CimMethod $p Terminate -Arguments @{Reason=0} -CimSession $sess -ErrorAction Stop
-                            if ($r.ReturnValue -eq 0) {
-                                Write-Host "[PID KILLED] $($p.ProcessId) on $($e.MACHINE)" -ForegroundColor Red
-                                $processKilled = $true
-                            }
-                        } catch {
-                            Write-Log "Kill failed for PID $($p.ProcessId)" "WARN" "Yellow"
-                        }
-                    }
-                }
-            } catch {}
-        }
-
-        # ==========================
-        # If process NOT killed → logoff
-        # ==========================
-        if (-not $processKilled) {
-            Write-Log "Process not killed → Logging off user $($e.OSUSER)" "WARN" "Red"
-
-            $sessions = Invoke-Command -ComputerName $e.MACHINE -Credential $Credential -ScriptBlock {
-                quser 2>$null
-            }
-
-            foreach ($line in $sessions) {
-                if ($line -match $e.OSUSER) {
-                    $sid = ($line -split '\s+')[2]
-                    if ($sid -match '^\d+$') {
-                        if (-not $DryRun) {
-                            Invoke-Command -ComputerName $e.MACHINE -Credential $Credential -ScriptBlock {
-                                param($id) logoff $id
-                            } -ArgumentList $sid
-                        }
-                        Write-Host "[SESSION LOGOFF] $sid on $($e.MACHINE)" -ForegroundColor Yellow
-                    }
-                }
-            }
-        }
-
-        Remove-CimSession $sess
-    }
-    catch {
-        Write-Log "Machine unreachable: $($e.MACHINE)" "ERROR" "Red"
-    }
-}
-
-Write-Host "`n[COMPLETED] Script execution finished" -ForegroundColor Cyan
+PS C:\Windows\system32> 
