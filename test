@@ -1,24 +1,7 @@
 C:\Windows\system32>python \\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment_latest_Edge.py
 Traceback (most recent call last):
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\driver_finder.py", line 67, in _binary_paths
-    output = SeleniumManager().binary_paths(self._to_args())
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\selenium_manager.py", line 54, in binary_paths
-    return self._run(args)
-           ~~~~~~~~~^^^^^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\selenium_manager.py", line 128, in _run
-    raise WebDriverException(
-        f"Unsuccessful command executed: {command}; code: {completed_proc.returncode}\n{result}\n{stderr}"
-    )
-selenium.common.exceptions.WebDriverException: Message: Unsuccessful command executed: C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe --browser MicrosoftEdge --language-binding python --output json; code: 65
-{'code': 65, 'message': 'error sending request for url (https://msedgedriver.azureedge.net/LATEST_RELEASE_144_WINDOWS)', 'driver_path': '', 'browser_path': ''}
-
-
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
   File "\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\Pre_PAK_Deployment_latest_Edge.py", line 67, in <module>
-    driver = webdriver.Edge(options=options)
+    driver = webdriver.Edge(service=service, options=options)
   File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\edge\webdriver.py", line 47, in __init__
     super().__init__(
     ~~~~~~~~~~~~~~~~^
@@ -29,15 +12,46 @@ Traceback (most recent call last):
         ^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 53, in __init__
-    if finder.get_browser_path():
-       ~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\driver_finder.py", line 47, in get_browser_path
-    return self._binary_paths()["browser_path"]
-           ~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\common\driver_finder.py", line 78, in _binary_paths
-    raise NoSuchDriverException(msg) from err
-selenium.common.exceptions.NoSuchDriverException: Message: Unable to obtain driver for MicrosoftEdge; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors/driver_location
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 69, in __init__
+    super().__init__(command_executor=executor, options=options)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 257, in __init__
+    self.start_session(capabilities)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 356, in start_session
+    response = self.execute(Command.NEW_SESSION, caps)["value"]
+               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 447, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\SA-ITS-APSMDINT-LAB\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created: This version of Microsoft Edge WebDriver only supports Microsoft Edge version 145
+Current browser version is 144.0.3719.82 with binary path C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+        0x7ff6c9564575
+        0x7ff6c9724304
+        0x7ff6c9a6889a
+        0x7ff6c94b66a3
+        0x7ff6c94b5bbc
+        0x7ff6c94b1352
+        0x7ff6c94adbfc
+        0x7ff6c94ef32e
+        0x7ff6c94eecc6
+        0x7ff6c94b9acc
+        0x7ff6c94b8d26
+        0x7ff6c94b98f3
+        0x7ff6c957db04
+        0x7ff6c957a123
+        0x7ff6c958a623
+        0x7ff6c973e9e8
+        0x7ff6c97473e6
+        0x7ff6c972b944
+        0x7ff6c972ba89
+        0x7ff6c97199f2
+        0x7ffcbc0d7ac4
+        0x7ffcbebea8c1
 
 
 C:\Windows\system32>
