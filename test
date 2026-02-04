@@ -13,23 +13,36 @@ function Backup-OutFiles {
         Write-Log "Created backup folder: $AgentBackupPath"
     }
 
-    # ---- NEW LOGIC ----
     $today = (Get-Date).Date
-    $extensions = @("*.out", "*.wrn", "*.tsv", "*.err")
 
-    $files = foreach ($ext in $extensions) {
+    # -------- FIRST CHECK --------
+    $extensionsFirst = @("*.out", "*.wrn", "*.tsv", "*.err")
+
+    $files = foreach ($ext in $extensionsFirst) {
         Get-ChildItem $SourcePath -Filter $ext -File -ErrorAction SilentlyContinue |
         Where-Object { $_.LastWriteTime.Date -eq $today }
     }
 
+    # -------- IF NOTHING FOUND, WAIT & RECHECK --------
     if (-not $files -or $files.Count -eq 0) {
-        Write-Log "No today's .out/.wrn/.tsv/.err files found for $Agent"
-        return
+        Write-Log "No same-day log files found for $Agent. Waiting 1 minute before re-check..."
+        Start-Sleep -Seconds 60
+
+        $extensionsSecond = @("*.out", "*.tsv")
+        $files = foreach ($ext in $extensionsSecond) {
+            Get-ChildItem $SourcePath -Filter $ext -File -ErrorAction SilentlyContinue |
+            Where-Object { $_.LastWriteTime.Date -eq $today }
+        }
+
+        if (-not $files -or $files.Count -eq 0) {
+            Write-Log "ERROR: No same-day .out or .tsv files found for $Agent even after 1 minute wait. Exiting script."
+            exit 1
+        }
     }
 
+    # -------- BACKUP --------
     foreach ($f in $files) {
         Copy-Item $f.FullName (Join-Path $AgentBackupPath $f.Name) -Force
         Write-Log "Backed up today's file $($f.Name) for $Agent"
     }
 }
-
