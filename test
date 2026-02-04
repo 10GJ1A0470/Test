@@ -1,9 +1,11 @@
-$BackupNote = "<p><b>Note:</b> Relevant agent log files were successfully backed up before remediation.</p>"
+write-log "Agent Health check after first remediation"
+$afterFirstRem = Check-Agents -Agents $ExpectedAgents
+$stillDown1 = $afterFirstRem.DownAgents
 
-
-$infoHtml = $afterFirstRem.Html + $BackupNote
-
-Send-EmailHtml `
-  -Subject "INFO: All agents UP after first remediation on $HostName" `
-  -HtmlBody $infoHtml `
-  -Recipients $ToInitial
+if ($stillDown1.Count -eq 0) {
+    # All agents UP after first remediation
+    $HostName = $env:COMPUTERNAME
+    Send-EmailHtml -Subject "INFO: All agents UP after first remediation on $HostName" -HtmlBody $afterFirstRem.Html -Recipients $ToInitial
+    Write-Log "All agents UP after first remediation. Exiting."
+    exit 0
+}
