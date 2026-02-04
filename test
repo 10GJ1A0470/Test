@@ -1,3 +1,4 @@
+# --- Second consolidated check ---
 write-log "Agent Health check after first remediation"
 $afterFirstRem = Check-Agents -Agents $ExpectedAgents
 $stillDown1 = $afterFirstRem.DownAgents
@@ -5,7 +6,44 @@ $stillDown1 = $afterFirstRem.DownAgents
 if ($stillDown1.Count -eq 0) {
     # All agents UP after first remediation
     $HostName = $env:COMPUTERNAME
-    Send-EmailHtml -Subject "INFO: All agents UP after first remediation on $HostName" -HtmlBody $afterFirstRem.Html -Recipients $ToInitial
+    Send-EmailHtml 
+		-Subject "INFO: All agents UP after first remediation on $HostName" 
+		-HtmlBody ($afterFirstRem.Html + $BackupNote)
+		-Recipients $ToInitial
     Write-Log "All agents UP after first remediation. Exiting."
     exit 0
 }
+
+
+
+[2026-02-04 10:07:40] BACKUP SUMMARY [OMP_JNJ_CMD_OPTMS_LAB_utl] : Total files backed up = 18
+[2026-02-04 10:07:40] Email sent to GYELLAP1@its.jnj.com: ALERT: Agents DOWN on AWSDMLNVAW0002 - 2026-02-04 10:07
+[2026-02-04 10:07:40] First remediation attempt for OMP_JNJ_CMD_OPTMS_LAB_utl
+[2026-02-04 10:08:54] Waiting 20 seconds before consolidated check...
+[2026-02-04 10:09:14] Agent Health check after first remediation
+[2026-02-04 10:09:15] ERROR: No recipients specified for email: 
+-Subject : The term '-Subject' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, 
+verify that the path is correct and try again.
+At \\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\Agent_db_restart_email_lates5.ps1:312 char:3
++         -Subject "INFO: All agents UP after first remediation on $Hos ...
++         ~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (-Subject:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+-HtmlBody : The term '-HtmlBody' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, 
+verify that the path is correct and try again.
+At \\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\Agent_db_restart_email_lates5.ps1:313 char:3
++         -HtmlBody ($afterFirstRem.Html + $BackupNote)
++         ~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (-HtmlBody:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+-Recipients : The term '-Recipients' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was 
+included, verify that the path is correct and try again.
+At \\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\Agent_db_restart_email_lates5.ps1:314 char:3
++         -Recipients $ToInitial
++         ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (-Recipients:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+[2026-02-04 10:09:15] All agents UP after first remediation. Exiting.
