@@ -1,1 +1,9 @@
+$BackupNote = "<p><b>Note:</b> Relevant agent log files were successfully backed up before remediation.</p>"
 
+
+$infoHtml = $afterFirstRem.Html + $BackupNote
+
+Send-EmailHtml `
+  -Subject "INFO: All agents UP after first remediation on $HostName" `
+  -HtmlBody $infoHtml `
+  -Recipients $ToInitial
