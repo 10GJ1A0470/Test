@@ -17,15 +17,14 @@ function Backup-OutFiles {
 
     # -------- FIRST CHECK --------
     $extensionsFirst = @("*.out", "*.wrn", "*.tsv", "*.err")
-
     $files = foreach ($ext in $extensionsFirst) {
         Get-ChildItem $SourcePath -Filter $ext -File -ErrorAction SilentlyContinue |
         Where-Object { $_.LastWriteTime.Date -eq $today }
     }
 
-    # -------- IF NOTHING FOUND, WAIT & RECHECK --------
+    # -------- WAIT & RECHECK --------
     if (-not $files -or $files.Count -eq 0) {
-        Write-Log "No same-day log files found for $Agent. Waiting 1 minute before re-check..."
+        Write-Log "No same-day logs found for $Agent. Waiting 1 minute..."
         Start-Sleep -Seconds 60
 
         $extensionsSecond = @("*.out", "*.tsv")
@@ -35,7 +34,24 @@ function Backup-OutFiles {
         }
 
         if (-not $files -or $files.Count -eq 0) {
-            Write-Log "ERROR: No same-day .out or .tsv files found for $Agent even after 1 minute wait. Exiting script."
+
+            Write-Log "CRITICAL: No same-day .out or .tsv logs found for $Agent after 1 minute wait."
+
+            $HostName = $env:COMPUTERNAME
+            $HtmlBody = @"
+<h2 style='color:red'>CRITICAL: Agent Logs Missing</h2>
+<p>
+Agent <b>$Agent</b> on host <b>$HostName</b><br/>
+No same-day <b>.out</b> or <b>.tsv</b> log files were found even after waiting 1 minute.<br/><br/>
+<b>Backup aborted and script terminated.</b>
+</p>
+"@
+
+            Send-EmailHtml `
+                -Subject "CRITICAL: Logs missing for $Agent on $HostName" `
+                -HtmlBody $HtmlBody `
+                -Recipients $ToInitial
+
             exit 1
         }
     }
