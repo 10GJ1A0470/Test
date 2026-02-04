@@ -13,39 +13,41 @@ function Backup-OutFiles {
         Write-Log "Created backup folder: $AgentBackupPath"
     }
 
-    $today = (Get-Date).Date
+    # ---- TIME WINDOW (200 minutes) ----
+    $cutoffTime = (Get-Date).AddMinutes(-200)
 
-    # -------- FIRST CHECK (same day) --------
+    # ---- MANDATORY FILE CHECK ----
     $outFiles = Get-ChildItem $SourcePath -Filter "*.out" -File -ErrorAction SilentlyContinue |
-                Where-Object { $_.LastWriteTime.Date -eq $today }
+                Where-Object { $_.LastWriteTime -ge $cutoffTime }
 
     $tsvFiles = Get-ChildItem $SourcePath -Filter "*.tsv" -File -ErrorAction SilentlyContinue |
-                Where-Object { $_.LastWriteTime.Date -eq $today }
+                Where-Object { $_.LastWriteTime -ge $cutoffTime }
 
-    # -------- MANDATORY CHECK --------
     if ($outFiles.Count -eq 0 -or $tsvFiles.Count -eq 0) {
 
-        Write-Log "Mandatory same-day .out or .tsv files missing for $Agent. Waiting 1 minute..."
+        Write-Log "Mandatory .out/.tsv not found in last 200 minutes for $Agent. Waiting 1 minute..."
         Start-Sleep -Seconds 60
 
         # Re-check after wait
+        $cutoffTime = (Get-Date).AddMinutes(-200)
+
         $outFiles = Get-ChildItem $SourcePath -Filter "*.out" -File -ErrorAction SilentlyContinue |
-                    Where-Object { $_.LastWriteTime.Date -eq $today }
+                    Where-Object { $_.LastWriteTime -ge $cutoffTime }
 
         $tsvFiles = Get-ChildItem $SourcePath -Filter "*.tsv" -File -ErrorAction SilentlyContinue |
-                    Where-Object { $_.LastWriteTime.Date -eq $today }
+                    Where-Object { $_.LastWriteTime -ge $cutoffTime }
 
         if ($outFiles.Count -eq 0 -or $tsvFiles.Count -eq 0) {
 
-            Write-Log "CRITICAL: Same-day .out and/or .tsv files still missing for $Agent after 1 minute."
+            Write-Log "CRITICAL: Mandatory .out/.tsv still missing for $Agent after retry."
 
             $HostName = $env:COMPUTERNAME
             $HtmlBody = @"
-<h2 style='color:red'>CRITICAL: Mandatory Logs Missing</h2>
+<h2 style='color:red'>CRITICAL: Mandatory Agent Logs Missing</h2>
 <p>
 Agent <b>$Agent</b> on host <b>$HostName</b><br/>
-Same-day <b>.out</b> and <b>.tsv</b> files are mandatory but were not found even after waiting 1 minute.<br/><br/>
-<b>Backup aborted and script stopped.</b>
+No <b>.out</b> and/or <b>.tsv</b> files found in the last <b>200 minutes</b>, even after retry.<br/><br/>
+<b>Backup aborted and script terminated.</b>
 </p>
 "@
 
@@ -58,12 +60,12 @@ Same-day <b>.out</b> and <b>.tsv</b> files are mandatory but were not found even
         }
     }
 
-    # -------- BACKUP ALL SAME-DAY LOGS --------
+    # ---- BACKUP ALL RELEVANT FILES ----
     $allFiles = Get-ChildItem $SourcePath -Include "*.out","*.tsv","*.wrn","*.err" -File -ErrorAction SilentlyContinue |
-                Where-Object { $_.LastWriteTime.Date -eq $today }
+                Where-Object { $_.LastWriteTime -ge $cutoffTime }
 
     foreach ($f in $allFiles) {
         Copy-Item $f.FullName (Join-Path $AgentBackupPath $f.Name) -Force
-        Write-Log "Backed up today's file $($f.Name) for $Agent"
+        Write-Log "Backed up file $($f.Name) for $Agent (LastWrite: $($f.LastWriteTime))"
     }
 }
