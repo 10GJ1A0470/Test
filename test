@@ -13,10 +13,10 @@ function Backup-OutFiles {
         Write-Log "Created backup folder: $AgentBackupPath"
     }
 
-    # ---- TIME WINDOW (200 minutes) ----
+    # -------- TIME WINDOW (200 minutes) --------
     $cutoffTime = (Get-Date).AddMinutes(-200)
 
-    # ---- MANDATORY FILE CHECK ----
+    # -------- MANDATORY FILE CHECK (.out & .tsv) --------
     $outFiles = Get-ChildItem $SourcePath -Filter "*.out" -File -ErrorAction SilentlyContinue |
                 Where-Object { $_.LastWriteTime -ge $cutoffTime }
 
@@ -46,7 +46,7 @@ function Backup-OutFiles {
 <h2 style='color:red'>CRITICAL: Mandatory Agent Logs Missing</h2>
 <p>
 Agent <b>$Agent</b> on host <b>$HostName</b><br/>
-No <b>.out</b> and/or <b>.tsv</b> files found in the last <b>200 minutes</b>, even after retry.<br/><br/>
+No <b>.out</b> and/or <b>.tsv</b> files found in the last <b>200 minutes</b>, even after 1 minute retry.<br/><br/>
 <b>Backup aborted and script terminated.</b>
 </p>
 "@
@@ -60,12 +60,21 @@ No <b>.out</b> and/or <b>.tsv</b> files found in the last <b>200 minutes</b>, ev
         }
     }
 
-    # ---- BACKUP ALL RELEVANT FILES ----
+    # -------- BACKUP ALL RELEVANT FILES --------
     $allFiles = Get-ChildItem $SourcePath -Include "*.out","*.tsv","*.wrn","*.err" -File -ErrorAction SilentlyContinue |
                 Where-Object { $_.LastWriteTime -ge $cutoffTime }
 
+    if (-not $allFiles -or $allFiles.Count -eq 0) {
+        Write-Log "No eligible files found for backup for $Agent (this should be rare)."
+        return
+    }
+
+    $backupCount = 0
     foreach ($f in $allFiles) {
         Copy-Item $f.FullName (Join-Path $AgentBackupPath $f.Name) -Force
-        Write-Log "Backed up file $($f.Name) for $Agent (LastWrite: $($f.LastWriteTime))"
+        Write-Log "BACKUP SUCCESS [$Agent] : $($f.Name) | LastWriteTime = $($f.LastWriteTime)"
+        $backupCount++
     }
+
+    Write-Log "BACKUP SUMMARY [$Agent] : Total files backed up = $backupCount"
 }
