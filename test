@@ -13,10 +13,10 @@ function Backup-OutFiles {
         Write-Log "Created backup folder: $AgentBackupPath"
     }
 
-    # -------- TIME WINDOW (200 minutes) --------
+    # -------- TIME WINDOW (2000 minutes) --------
     $cutoffTime = (Get-Date).AddMinutes(-2000)
 
-    # -------- MANDATORY FILE CHECK (.out & .tsv) --------
+    # -------- MANDATORY FILE CHECK --------
     $outFiles = Get-ChildItem $SourcePath -Filter "*.out" -File -ErrorAction SilentlyContinue |
                 Where-Object { $_.LastWriteTime -ge $cutoffTime }
 
@@ -25,10 +25,9 @@ function Backup-OutFiles {
 
     if ($outFiles.Count -eq 0 -or $tsvFiles.Count -eq 0) {
 
-        Write-Log "Mandatory .out/.tsv not found in last 200 minutes for $Agent. Waiting 1 minute..."
+        Write-Log "Mandatory .out/.tsv not found in last 2000 minutes for $Agent. Waiting 1 minute..."
         Start-Sleep -Seconds 60
 
-        # Re-check after wait
         $cutoffTime = (Get-Date).AddMinutes(-2000)
 
         $outFiles = Get-ChildItem $SourcePath -Filter "*.out" -File -ErrorAction SilentlyContinue |
@@ -46,7 +45,7 @@ function Backup-OutFiles {
 <h2 style='color:red'>CRITICAL: Mandatory Agent Logs Missing</h2>
 <p>
 Agent <b>$Agent</b> on host <b>$HostName</b><br/>
-No <b>.out</b> and/or <b>.tsv</b> files found in the last <b>200 minutes</b>, even after 1 minute retry.<br/><br/>
+No <b>.out</b> and/or <b>.tsv</b> files found in the last <b>2000 minutes</b>, even after retry.<br/><br/>
 <b>Backup aborted and script terminated.</b>
 </p>
 "@
@@ -60,12 +59,15 @@ No <b>.out</b> and/or <b>.tsv</b> files found in the last <b>200 minutes</b>, ev
         }
     }
 
-    # -------- BACKUP ALL RELEVANT FILES --------
-    $allFiles = Get-ChildItem $SourcePath -Include "*.out","*.tsv","*.wrn","*.err" -File -ErrorAction SilentlyContinue |
-                Where-Object { $_.LastWriteTime -ge $cutoffTime }
+    # -------- BACKUP ALL RELEVANT FILES (FIXED) --------
+    $allFiles = Get-ChildItem $SourcePath -File -ErrorAction SilentlyContinue |
+                Where-Object {
+                    $_.LastWriteTime -ge $cutoffTime -and
+                    $_.Extension -in ".out",".tsv",".wrn",".err"
+                }
 
-    if (-not $allFiles -or $allFiles.Count -eq 0) {
-        Write-Log "No eligible files found for backup for $Agent (this should be rare)."
+    if ($allFiles.Count -eq 0) {
+        Write-Log "No eligible files found for backup for $Agent after filtering."
         return
     }
 
@@ -78,10 +80,3 @@ No <b>.out</b> and/or <b>.tsv</b> files found in the last <b>200 minutes</b>, ev
 
     Write-Log "BACKUP SUMMARY [$Agent] : Total files backed up = $backupCount"
 }
-
-
-
-PS C:\Windows\system32> \\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\Agent_db_restart_email_lates5.ps1
-[2026-02-04 09:00:38] Starting Agent Health check...
-[2026-02-04 09:00:39] No eligible files found for backup for OMP_JNJ_CMD_OPTMS_LAB_utl (this should be rare).
-[2026-02-04 09:00:39] Email sent to GYELLAP1@its.jnj.com: ALERT: Agents DOWN on AWSDMLNVAW0002 - 2026-02-04 09:00
