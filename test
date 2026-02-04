@@ -1,1 +1,35 @@
+function Backup-OutFiles {
+    param($Agent)
+
+    $SourcePath = $outfile_path[$Agent]
+    if (-not (Test-Path $SourcePath)) {
+        Write-Log "WARNING: Outfile path not found for $Agent : $SourcePath"
+        return
+    }
+
+    $AgentBackupPath = Join-Path $backup_path $Agent
+    if (-not (Test-Path $AgentBackupPath)) {
+        New-Item -ItemType Directory -Path $AgentBackupPath -Force | Out-Null
+        Write-Log "Created backup folder: $AgentBackupPath"
+    }
+
+    # ---- NEW LOGIC ----
+    $today = (Get-Date).Date
+    $extensions = @("*.out", "*.wrn", "*.tsv", "*.err")
+
+    $files = foreach ($ext in $extensions) {
+        Get-ChildItem $SourcePath -Filter $ext -File -ErrorAction SilentlyContinue |
+        Where-Object { $_.LastWriteTime.Date -eq $today }
+    }
+
+    if (-not $files -or $files.Count -eq 0) {
+        Write-Log "No today's .out/.wrn/.tsv/.err files found for $Agent"
+        return
+    }
+
+    foreach ($f in $files) {
+        Copy-Item $f.FullName (Join-Path $AgentBackupPath $f.Name) -Force
+        Write-Log "Backed up today's file $($f.Name) for $Agent"
+    }
+}
 
