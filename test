@@ -1,1 +1,11 @@
+# -------- CREATE UNIQUE RUN FOLDER --------
+$HostName = $env:COMPUTERNAME
+$RunTime  = Get-Date -Format "yyyyMMdd_HHmmss"
 
+$RunBackupFolder = Join-Path $AgentBackupPath "${HostName}_UNC_${RunTime}"
+
+New-Item -ItemType Directory -Path $RunBackupFolder -Force | Out-Null
+Write-Log "Created run backup folder: $RunBackupFolder"
+
+
+Copy-Item $f.FullName (Join-Path $RunBackupFolder $f.Name) -Force
