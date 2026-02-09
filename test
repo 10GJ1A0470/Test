@@ -1,1 +1,1 @@
-Send-EmailHtml -Subject "INFO: All agents UP after first remediation on $HostName" -HtmlBody ($afterFirstRem.Html + $BackupNote) -Recipients $ToInitial
+
