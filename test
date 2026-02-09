@@ -7,18 +7,16 @@ function Backup-OutFiles {
         return
     }
 
-    # Agent base backup path
-    $AgentBackupPath = Join-Path $backup_path $Agent
-    if (-not (Test-Path $AgentBackupPath)) {
-        New-Item -ItemType Directory -Path $AgentBackupPath -Force | Out-Null
-        Write-Log "Created agent backup folder: $AgentBackupPath"
+    # -------- CREATE UNIQUE RUN FOLDER DIRECTLY UNDER BACKUP_PATH --------
+    if (-not (Test-Path $backup_path)) {
+        New-Item -ItemType Directory -Path $backup_path -Force | Out-Null
+        Write-Log "Created base backup folder: $backup_path"
     }
 
-    # -------- CREATE UNIQUE RUN FOLDER --------
     $HostName = $env:COMPUTERNAME
     $RunTime  = Get-Date -Format "yyyyMMdd_HHmmss"
 
-    $RunBackupFolder = Join-Path $AgentBackupPath "${HostName}_UNC_${RunTime}"
+    $RunBackupFolder = Join-Path $backup_path "${HostName}_UNC_${RunTime}"
     New-Item -ItemType Directory -Path $RunBackupFolder -Force | Out-Null
 
     Write-Log "Created run backup folder: $RunBackupFolder"
@@ -50,7 +48,6 @@ function Backup-OutFiles {
 
             Write-Log "CRITICAL: Mandatory .out/.tsv still missing for $Agent after retry."
 
-            $HostName = $env:COMPUTERNAME
             $HtmlBody = @"
 <h2 style='color:red'>CRITICAL: Mandatory Agent Logs Missing</h2>
 <p>
@@ -69,7 +66,7 @@ No <b>.out</b> and/or <b>.tsv</b> files found in the last <b>200 minutes</b>, ev
         }
     }
 
-    # -------- BACKUP FILES (.out, .tsv, .wrn, .err) --------
+    # -------- BACKUP FILES --------
     $allFiles = Get-ChildItem $SourcePath -File -ErrorAction SilentlyContinue |
                 Where-Object {
                     $_.LastWriteTime -ge $cutoffTime -and
@@ -90,7 +87,3 @@ No <b>.out</b> and/or <b>.tsv</b> files found in the last <b>200 minutes</b>, ev
 
     Write-Log "BACKUP SUMMARY [$Agent] : Total files backed up = $backupCount"
 }
-
-
-
-Copy-Item $f.FullName (Join-Path $RunBackupFolder $f.Name) -Force
