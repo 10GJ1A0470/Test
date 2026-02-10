@@ -1,6 +1,100 @@
-PS C:\Windows\system32> \\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\Agent_db_restart_email_lates6.ps1
-[2026-02-10 07:39:56] Starting Agent Health check...
-[2026-02-10 07:39:56] Old db_status.txt deleted.
-[2026-02-10 07:39:58] WARNING: Mandatory files not found for OMP_JNJ_CMD_OPTMS_LAB_utl in primary or secondary path. Skipping backup.
-[2026-02-10 07:39:59] Email sent to GYELLAP1@its.jnj.com: ALERT: Agents DOWN on AWSDMLNVAW0002 - 2026-02-10 07:39
-[2026-02-10 07:39:59] First remediation attempt for OMP_JNJ_CMD_OPTMS_LAB_utl
+function Backup-OutFiles {
+    param($Agent)
+
+    $PrimaryPath   = $primaryoutfile_path[$Agent]
+    $SecondaryPath = $secondaryoutfile_path[$Agent]
+
+    $SourcePath = $null
+    $SourceTag  = $null
+    $HostName   = $env:COMPUTERNAME
+
+    function Get-ValidSource {
+        param($cutoffTime)
+
+        if ($PrimaryPath -and (Test-Path $PrimaryPath)) {
+            $out = Get-ChildItem $PrimaryPath -Filter "*.out" -File -ErrorAction SilentlyContinue |
+                   Where-Object { $_.LastWriteTime -ge $cutoffTime }
+            $tsv = Get-ChildItem $PrimaryPath -Filter "*.tsv" -File -ErrorAction SilentlyContinue |
+                   Where-Object { $_.LastWriteTime -ge $cutoffTime }
+
+            if ($out.Count -gt 0 -and $tsv.Count -gt 0) {
+                return @{ Path = $PrimaryPath; Tag = "UNC" }
+            }
+        }
+
+        if ($SecondaryPath -and (Test-Path $SecondaryPath)) {
+            $out = Get-ChildItem $SecondaryPath -Filter "*.out" -File -ErrorAction SilentlyContinue |
+                   Where-Object { $_.LastWriteTime -ge $cutoffTime }
+            $tsv = Get-ChildItem $SecondaryPath -Filter "*.tsv" -File -ErrorAction SilentlyContinue |
+                   Where-Object { $_.LastWriteTime -ge $cutoffTime }
+
+            if ($out.Count -gt 0 -and $tsv.Count -gt 0) {
+                return @{ Path = $SecondaryPath; Tag = "Client" }
+            }
+        }
+
+        return $null
+    }
+
+    # -------- FIRST CHECK --------
+    $cutoffTime = (Get-Date).AddMinutes(-200)
+    $result = Get-ValidSource -cutoffTime $cutoffTime
+
+    # -------- WAIT & RETRY --------
+    if (-not $result) {
+        Write-Log "WARNING: Mandatory files not found for $Agent. Waiting 1 minute and retrying..."
+        Start-Sleep -Seconds 60
+
+        $cutoffTime = (Get-Date).AddMinutes(-200)
+        $result = Get-ValidSource -cutoffTime $cutoffTime
+
+        if (-not $result) {
+            Write-Log "CRITICAL: Mandatory files still missing for $Agent after retry."
+
+            $HtmlBody = @"
+<h2 style='color:red'>CRITICAL: Agent Log Files Missing</h2>
+<p>
+Agent <b>$Agent</b> on host <b>$HostName</b><br/>
+Mandatory <b>.out</b> and <b>.tsv</b> files were not found in both
+primary and secondary paths even after <b>1 minute retry</b>.<br/><br/>
+<b>Script terminated.</b>
+</p>
+"@
+
+            Send-EmailHtml `
+                -Subject "CRITICAL: $HostName Agent Logs Missing for $Agent" `
+                -HtmlBody $HtmlBody `
+                -Recipients $ToInitial
+
+            exit 1
+        }
+    }
+
+    $SourcePath = $result.Path
+    $SourceTag  = $result.Tag
+
+    # -------- CREATE BACKUP FOLDER --------
+    if (-not (Test-Path $backup_path)) {
+        New-Item -ItemType Directory -Path $backup_path -Force | Out-Null
+    }
+
+    $RunTime = Get-Date -Format "yyyyMMdd_HHmmss"
+    $RunBackupFolder = Join-Path $backup_path "${HostName}_${SourceTag}_${RunTime}"
+    New-Item -ItemType Directory -Path $RunBackupFolder -Force | Out-Null
+
+    Write-Log "Created run backup folder: $RunBackupFolder"
+
+    # -------- BACKUP FILES --------
+    $allFiles = Get-ChildItem $SourcePath -File -ErrorAction SilentlyContinue |
+                Where-Object {
+                    $_.LastWriteTime -ge $cutoffTime -and
+                    $_.Extension -in ".out",".tsv",".wrn",".err"
+                }
+
+    foreach ($f in $allFiles) {
+        Copy-Item $f.FullName (Join-Path $RunBackupFolder $f.Name) -Force
+        Write-Log "BACKUP SUCCESS [$Agent][$SourceTag] : $($f.Name)"
+    }
+
+    Write-Log "BACKUP COMPLETED for $Agent using $SourceTag path"
+}
