@@ -1,1 +1,8 @@
+$BackupLinks = ""
 
+foreach ($b in $AllBackupPaths) {
+    $fileUrl = $b -replace "\\","/"
+    $BackupLinks += "<p><a href='file:///$fileUrl'>Open Backup Folder: $b</a></p>"
+}
+
+$FinalBody = $afterFirstRem.Html + $BackupNote + $BackupLinks
