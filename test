@@ -310,19 +310,19 @@ if ($downAgents.Count -eq 0) {
 }
 
 # BACKUP STEP (New part)
-#foreach ($agent in $downAgents) {
-#    Backup-OutFiles -Agent $agent
-#}
-
-$AllBackupPaths = @()
-
 foreach ($agent in $downAgents) {
-	$path = Backup-OutFiles -Agent $agent
-	if ($path) {
-		$AllBackupPaths += $path
-		
-	}
+    Backup-OutFiles -Agent $agent
 }
+
+#$AllBackupPaths = @()
+#
+#foreach ($agent in $downAgents) {
+#	$path = Backup-OutFiles -Agent $agent
+#	if ($path) {
+#		$AllBackupPaths += $path
+#		
+#	}
+#}
 
 
 $HostName = $env:COMPUTERNAME
