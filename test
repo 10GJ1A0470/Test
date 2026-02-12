@@ -1,26 +1,27 @@
 # ---------------- CONFIGURATION ----------------
 $ExpectedAgents = @(
-    "OMP_JNJ_CMD_OPTMS_DEV3_utl",
+	"OMP_JNJ_CMD_OPTMS_DEV3_utl",
     "OMP_JNJ_CMD_OPTMS_LAB_utl",
     "OMP_JNJ_CMD_OPTMS_PDEV2_utl",
     "OMP_JNJ_CMD_OPTMS_DEV2_utl"
 )
 
+# Mapping: DB batch (.bat) and start script (.py)
 $AgentScripts = @{
     "OMP_JNJ_CMD_OPTMS_LAB_utl"   = @{ DB = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\dbbat_update.bat"; Start = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\OPTIMUS_LAB_Test_ExceptDsiaptcher.py" }
     "OMP_JNJ_CMD_OPTMS_PDEV2_utl" = @{ DB = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\dbbat_update.bat"; Start = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\OPTIMUS_LAB_Test_ExceptDsiaptcher.py" }
     "OMP_JNJ_CMD_OPTMS_DEV3_utl"  = @{ DB = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\dbbat.bat"; Start = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\OPTIMUS_LAB_Test_ExceptDsiaptcher.py" }
-    "OMP_JNJ_CMD_OPTMS_DEV2_utl"  = @{ DB = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\dbbat.bat"; Start = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\OPTIMUS_LAB_Test_ExceptDsiaptcher.py" }
+	"OMP_JNJ_CMD_OPTMS_DEV2_utl"  = @{ DB = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\dbbat.bat"; Start = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\OPTIMUS_LAB_Test_ExceptDsiaptcher.py" }
 }
 
 $primaryoutfile_path = @{
-    "OMP_JNJ_CMD_OPTMS_LAB_utl"   = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\omdata\development\dispatcher\Agent"
+    "OMP_JNJ_CMD_OPTMS_LAB_utl" = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\omdata\development\dispatcher\Agent"
     "OMP_JNJ_CMD_OPTMS_PDEV2_utl" = "D:\OMClient\spdevelopment\user\sa-its-apsmdint-dev1\dispatcher\Agent"
     "OMP_JNJ_CMD_OPTMS_DEV3_utl"  = "D:\OMClient\sptrn\user\SA-ITS-APSMDDINT-TRN\dispatcher\Agent"
     "OMP_JNJ_CMD_OPTMS_DEV2_utl"  = "D:\OMClient\sptrn\user\SA-ITS-APSMDINT-LAB\dispatcher\ManagementAction"
 }
 
-$secondaryoutfile_path = @{
+$secondaryoutfile_path = @{ 
     "OMP_JNJ_CMD_OPTMS_LAB_utl"   = "D:\OMClient\development\user\sa-its-apsotint-lab\dispatcher\Agent"
     "OMP_JNJ_CMD_OPTMS_PDEV2_utl" = "D:\OMClient\spdevelopment\user\sa-its-apsmdint-dev1\dispatcher\Agent"
     "OMP_JNJ_CMD_OPTMS_DEV3_utl"  = "D:\OMClient\sptrn\user\SA-ITS-APSMDDINT-TRN\dispatcher\Agent"
@@ -28,6 +29,7 @@ $secondaryoutfile_path = @{
 }
 
 $PythonExe = "C:\Users\SA-ITS-APSOTINT-LAB\AppData\Local\Programs\Python\Python312\python.exe"
+$dbStatusFile = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\log\db_status.txt"
 
 $SmtpServer = "SMTP.EU.JNJ.COM"
 $From = "SA-ITS-APSOTINT-LAB@its.jnj.com"
@@ -59,22 +61,25 @@ function Backup-OutFiles {
 
     $PrimaryPath   = $primaryoutfile_path[$Agent]
     $SecondaryPath = $secondaryoutfile_path[$Agent]
-    $HostName = $env:COMPUTERNAME
+    $HostName   = $env:COMPUTERNAME
 
-    function Get-ValidSource($cutoffTime) {
+    function Get-ValidSource {
+        param($cutoffTime)
 
         if ($PrimaryPath -and (Test-Path $PrimaryPath)) {
-            $files = Get-ChildItem $PrimaryPath -File -ErrorAction SilentlyContinue |
-                     Where-Object { $_.LastWriteTime -ge $cutoffTime -and $_.Extension -in ".out",".tsv" }
-            if ($files.Count -ge 2) {
+            $out = Get-ChildItem $PrimaryPath -Filter "*.out" -File | Where-Object { $_.LastWriteTime -ge $cutoffTime }
+            $tsv = Get-ChildItem $PrimaryPath -Filter "*.tsv" -File | Where-Object { $_.LastWriteTime -ge $cutoffTime }
+
+            if ($out.Count -gt 0 -and $tsv.Count -gt 0) {
                 return @{ Path = $PrimaryPath; Tag = "UNC" }
             }
         }
 
         if ($SecondaryPath -and (Test-Path $SecondaryPath)) {
-            $files = Get-ChildItem $SecondaryPath -File -ErrorAction SilentlyContinue |
-                     Where-Object { $_.LastWriteTime -ge $cutoffTime -and $_.Extension -in ".out",".tsv" }
-            if ($files.Count -ge 2) {
+            $out = Get-ChildItem $SecondaryPath -Filter "*.out" -File | Where-Object { $_.LastWriteTime -ge $cutoffTime }
+            $tsv = Get-ChildItem $SecondaryPath -Filter "*.tsv" -File | Where-Object { $_.LastWriteTime -ge $cutoffTime }
+
+            if ($out.Count -gt 0 -and $tsv.Count -gt 0) {
                 return @{ Path = $SecondaryPath; Tag = "Client" }
             }
         }
@@ -83,49 +88,61 @@ function Backup-OutFiles {
     }
 
     $cutoffTime = (Get-Date).AddHours(-24)
-    $result = Get-ValidSource $cutoffTime
+    $result = Get-ValidSource -cutoffTime $cutoffTime
 
     if (-not $result) {
-        Write-Log "Files not found for $Agent. Waiting 1 minute..."
-        Start-Sleep -Seconds 60
-        $cutoffTime = (Get-Date).AddHours(-24)
-        $result = Get-ValidSource $cutoffTime
-
-        if (-not $result) {
-            Write-Log "CRITICAL: Mandatory files still missing for $Agent"
-            Send-EmailHtml -Subject "CRITICAL: $HostName Agent Logs Missing for $Agent" `
-                           -HtmlBody "<h3>Mandatory logs missing. Script stopped.</h3>" `
-                           -Recipients $ToInitial
-            exit 1
-        }
+        Write-Log "WARNING: Files not found for $Agent. Retrying in 1 minute"
+        Start-Sleep 60
+        $result = Get-ValidSource -cutoffTime $cutoffTime
+        if (-not $result) { exit 1 }
     }
 
     $SourcePath = $result.Path
     $SourceTag  = $result.Tag
 
     if (-not (Test-Path $backup_path)) {
-        New-Item -ItemType Directory -Path $backup_path -Force | Out-Null
+        New-Item -ItemType Directory -Path $backup_path | Out-Null
     }
 
     $RunTime = Get-Date -Format "yyyyMMdd_HHmmss"
     $RunBackupFolder = Join-Path $backup_path "${HostName}_${SourceTag}_${RunTime}"
-    New-Item -ItemType Directory -Path $RunBackupFolder -Force | Out-Null
+    New-Item -ItemType Directory -Path $RunBackupFolder | Out-Null
 
-    $allFiles = Get-ChildItem $SourcePath -File -ErrorAction SilentlyContinue |
-                Where-Object { $_.LastWriteTime -ge $cutoffTime -and $_.Extension -in ".out",".tsv",".wrn",".err" }
-
-    foreach ($f in $allFiles) {
-        Copy-Item $f.FullName (Join-Path $RunBackupFolder $f.Name) -Force
-        Write-Log "BACKUP SUCCESS [$Agent] : $($f.Name)"
+    $files = Get-ChildItem $SourcePath -File | Where-Object {
+        $_.LastWriteTime -ge $cutoffTime -and
+        $_.Extension -in ".out",".tsv",".wrn",".err"
     }
 
-    Write-Log "BACKUP COMPLETED for $Agent"
+    foreach ($f in $files) {
+        Copy-Item $f.FullName (Join-Path $RunBackupFolder $f.Name) -Force
+    }
+
+    Write-Log "Backup completed for $Agent → $RunBackupFolder"
+
     return $RunBackupFolder
 }
 
+function Build-HTMLReport {
+    param($Title, $Agents, $DownAgents)
+    $HostName = $env:COMPUTERNAME
+    $html = "<html><body><h2>$Title</h2><h3>Host: $HostName</h3><table border='1'>"
+
+    foreach ($a in $Agents) {
+        if ($DownAgents -contains $a) {
+            $html += "<tr><td>$a</td><td style='color:red'>DOWN</td></tr>"
+        }
+        else {
+            $html += "<tr><td>$a</td><td style='color:green'>RUNNING</td></tr>"
+        }
+    }
+
+    $html += "</table></body></html>"
+    return $html
+}
+
 function Send-EmailHtml {
-    param($Subject,$HtmlBody,$Recipients)
-    if ([string]::IsNullOrWhiteSpace($Recipients)) { return }
+    param($Subject, $HtmlBody, $Recipients)
+
     Send-MailMessage -From $From -To $Recipients -Subject $Subject -Body $HtmlBody -SmtpServer $SmtpServer -BodyAsHtml
 }
 
@@ -133,54 +150,48 @@ function Check-Agents {
     param($Agents)
 
     $cmdLines = wmic process where "name like '%ompeditor%'" get CommandLine /VALUE |
-        Select-String "^CommandLine=" | ForEach-Object {
-            $_.ToString().Replace("CommandLine=", "").Trim()
-        }
+        Select-String "^CommandLine=" |
+        ForEach-Object { $_.ToString().Replace("CommandLine=","").Trim() }
 
     $down = @()
-    foreach ($a in $Agents) {
-        $matched = $false
-        foreach ($c in $cmdLines) {
-            if ($c -match "/database=\{.*$([regex]::Escape($a)).*\}") { $matched = $true; break }
-        }
-        if (-not $matched) { $down += $a }
-    }
 
-    $html = "<html><body><h3>Agent Status</h3><table border='1'>"
     foreach ($a in $Agents) {
-        if ($down -contains $a) {
-            $html += "<tr><td>$a</td><td style='color:red'>DOWN</td></tr>"
-        } else {
-            $html += "<tr><td>$a</td><td style='color:green'>RUNNING</td></tr>"
+        if (-not ($cmdLines -match $a)) {
+            $down += $a
         }
     }
-    $html += "</table></body></html>"
 
+    $html = Build-HTMLReport "Agent Status Report" $Agents $down
     return @{ DownAgents=$down; Html=$html }
 }
 
 # ---------------- MAIN ----------------
 
-Write-Log "Starting Agent Health check..."
+Write-Log "Starting Agent Health Check"
 
 $initial = Check-Agents $ExpectedAgents
 $downAgents = $initial.DownAgents
 
 if ($downAgents.Count -eq 0) {
-    Write-Log "All agents running. Exiting."
+    Write-Log "All agents running"
     exit 0
 }
 
+# Backup Capture
 $AllBackupPaths = @()
+
 foreach ($agent in $downAgents) {
-    $path = Backup-OutFiles $agent
+    $path = Backup-OutFiles -Agent $agent
     if ($path) { $AllBackupPaths += $path }
 }
 
-$HostName = $env:COMPUTERNAME
-Send-EmailHtml -Subject "ALERT: Agents DOWN on $HostName" -HtmlBody $initial.Html -Recipients $ToInitial
+Send-EmailHtml "ALERT: Agents DOWN" $initial.Html $ToInitial
 
-Start-Sleep -Seconds 20
+foreach ($agent in $downAgents) {
+    Run-DbBatch $AgentScripts[$agent].DB
+    Run-PythonStart $AgentScripts[$agent].Start
+    Start-Sleep 20
+}
 
 $afterFirstRem = Check-Agents $ExpectedAgents
 $stillDown1 = $afterFirstRem.DownAgents
@@ -188,6 +199,7 @@ $stillDown1 = $afterFirstRem.DownAgents
 if ($stillDown1.Count -eq 0) {
 
     $BackupLinks = ""
+
     foreach ($b in $AllBackupPaths) {
         $fileUrl = $b -replace "\\","/"
         $BackupLinks += "<p><a href='file:///$fileUrl'>Open Backup Folder: $b</a></p>"
@@ -195,13 +207,8 @@ if ($stillDown1.Count -eq 0) {
 
     $FinalBody = $afterFirstRem.Html + $BackupNote + $BackupLinks
 
-    Send-EmailHtml -Subject "INFO: All agents UP after remediation on $HostName" `
-                   -HtmlBody $FinalBody `
-                   -Recipients $ToInitial
-
-    Write-Log "All agents UP after remediation."
+    Send-EmailHtml "INFO: All Agents UP" $FinalBody $ToInitial
     exit 0
 }
 
-Write-Log "Agent Health check finished."
-exit 0
+Write-Log "Agent Health Check Completed"
