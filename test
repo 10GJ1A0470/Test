@@ -1,43 +1,18 @@
-$LatestBackupPath = $null
-
-foreach ($agent in $downAgents) {
-
-    Write-Log "Starting backup for agent: $agent"
-
-    $BackupPathReturned = Backup-OutFiles -Agent $agent
-
-    if ($BackupPathReturned) {
-        Write-Log "Backup completed for $agent. Folder: $BackupPathReturned"
-        $LatestBackupPath = $BackupPathReturned
-    }
-    else {
-        Write-Log "Backup FAILED or skipped for $agent"
-    }
-}
-
-
-
-
-if ($stillDown1.Count -eq 0) {
-
-    $HostName = $env:COMPUTERNAME
-
     $BackupNote = "<p><b>Note:</b> Backup also taken for failed agent logs.</p>"
 
     $BackupLink = ""
 
     if ($LatestBackupPath) {
-        $fileUrl = $LatestBackupPath -replace "\\","/"
-        $BackupLink = "<p><a href='file:///$fileUrl'>Open Backup Folder: $LatestBackupPath</a></p>"
+
+        # Convert path to clickable file URL
+        $fileUrl = "file:///" + ($LatestBackupPath -replace "\\","/")
+
+        $BackupLink = @"
+<p>
+<b>Backup Folder:</b><br/>
+<a href='$fileUrl'>$LatestBackupPath</a>
+</p>
+"@
     }
 
     $FinalBody = $afterFirstRem.Html + $BackupNote + $BackupLink
-
-    Send-EmailHtml `
-        -Subject "INFO: All agents UP after first remediation on $HostName" `
-        -HtmlBody $FinalBody `
-        -Recipients $ToInitial
-
-    Write-Log "All agents UP after first remediation. Exiting."
-    exit 0
-}
