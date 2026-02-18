@@ -1,50 +1,56 @@
 # ---------------- CONFIGURATION ----------------
 $ExpectedAgents = @(
-    #"OMP_JNJ_CMD_OPTMS_PDEV3_utl",
-	"OMP_JNJ_CMD_OPTMS_DEV3_utl",
-    "OMP_JNJ_CMD_OPTMS_LAB_utl",
-    "OMP_JNJ_CMD_OPTMS_PDEV2_utl",
-    "OMP_JNJ_CMD_OPTMS_DEV2_utl"
+    "OMP_JNJ_MD_GET_PREDEV5_utl",
+	"OMP_JNJ_MD_GET_DEV5_utl",
+    "OMP_JNJ_MD_OMEGA_DEV2_utl",
+    "OMP_JNJ_MD_OMEGA_DEV4_utl",
+    #"OMP_JNJ_MD_OMEGA_PREDEV2_utl",
+	"OMP_JNJ_MD_OMEGA_LAB_utl"
 )
 
 
 # Mapping: DB batch (.bat) and start script (.py)
 $AgentScripts = @{
-    #"OMP_JNJ_CMD_OPTMS_PDEV3_utl"     = @{ DB = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\dbbat_update.bat"; Start = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\OPTIMUS_LAB_Test_ExceptDsiaptcher.py" }
-    "OMP_JNJ_CMD_OPTMS_LAB_utl"   = @{ DB = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\dbbat_update.bat"; Start = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\OPTIMUS_LAB_Test_ExceptDsiaptcher.py" }
-    "OMP_JNJ_CMD_OPTMS_PDEV2_utl"   = @{ DB = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\dbbat_update.bat"; Start = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\OPTIMUS_LAB_Test_ExceptDsiaptcher.py" }
-    "OMP_JNJ_CMD_OPTMS_DEV3_utl"  = @{ DB = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\dbbat.bat"; Start = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\OPTIMUS_LAB_Test_ExceptDsiaptcher.py" }
-	"OMP_JNJ_CMD_OPTMS_DEV2_utl" = @{ DB = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\dbbat.bat"; Start = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\OPTIMUS_LAB_Test_ExceptDsiaptcher.py" }
+    "OMP_JNJ_MD_OMEGA_LAB_utl"    = @{ DB = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\OMEGA_LAB_Test.py" }
+    "OMP_JNJ_MD_GET_PREDEV5_utl"     = @{ DB = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\OMEGA_LAB_Test.py" }
+    "OMP_JNJ_MD_OMEGA_DEV2_utl"   = @{ DB = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\OMEGA_LAB_Test.py" }
+    "OMP_JNJ_MD_OMEGA_DEV4_utl"   = @{ DB = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\OMEGA_LAB_Test.py" }
+    "OMP_JNJ_MD_GET_DEV5_utl"  = @{ DB = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\OMEGA_LAB_Test.py" }
+	#"OMP_JNJ_MD_OMEGA_PREDEV2_utl" = @{ DB = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\dbbat_update.bat"; Start = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\OMEGA_LAB_Test.py" }
 }
 
 $primaryoutfile_path = @{
-    "OMP_JNJ_CMD_OPTMS_LAB_utl" = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\omdata\development\dispatcher\Agent"
-    "OMP_JNJ_CMD_OPTMS_PDEV3_utl"    = "D:\OMClient\spdevelopment5\user\SA-ITS-APSMDINT-DEV5\dispatcher\Agent"
-    "OMP_JNJ_CMD_OPTMS_PDEV2_utl"     = "D:\OMClient\spdevelopment\user\sa-its-apsmdint-dev1\dispatcher\Agent"
-    "OMP_JNJ_CMD_OPTMS_DEV3_utl"     = "D:\OMClient\sptrn\user\SA-ITS-APSMDDINT-TRN\dispatcher\Agent"
-    "OMP_JNJ_CMD_OPTMS_DEV2_utl"       = "D:\OMClient\sptrn\user\SA-ITS-APSMDINT-LAB\dispatcher\ManagementAction"
+    "OMP_JNJ_MD_OMEGA_LAB_utl" 		= "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\omdata\development\dispatcher\Agent"
+    "OMP_JNJ_MD_GET_PREDEV5_utl"    = "D:\OMClient\spdevelopment5\user\SA-ITS-APSMDINT-DEV5\dispatcher\Agent"
+    "OMP_JNJ_MD_OMEGA_DEV2_utl"     = "D:\OMClient\spdevelopment\user\sa-its-apsmdint-dev1\dispatcher\Agent"
+    "OMP_JNJ_MD_OMEGA_DEV4_utl"     = "D:\OMClient\sptrn\user\SA-ITS-APSMDDINT-TRN\dispatcher\Agent"
+    "OMP_JNJ_MD_GET_DEV5_utl"       = "D:\OMClient\sptrn\user\SA-ITS-APSMDINT-LAB\dispatcher\ManagementAction"
+	#"OMP_JNJ_MD_OMEGA_PREDEV2_utl"  = "D:\OMClient\sptrn\user\SA-ITS-APSMDINT-LAB\dispatcher\ManagementAction"
+	
 }
 
 $secondaryoutfile_path = @{ 
-    "OMP_JNJ_CMD_OPTMS_LAB_utl"   = "D:\OMClient\development\user\sa-its-apsotint-lab\dispatcher\Agent"
-    "OMP_JNJ_CMD_OPTMS_PDEV3_utl" = "D:\OMClient\spdevelopment5\user\SA-ITS-APSMDINT-DEV5\dispatcher\Agent"
-    "OMP_JNJ_CMD_OPTMS_PDEV2_utl" = "D:\OMClient\spdevelopment\user\sa-its-apsmdint-dev1\dispatcher\Agent"
-    "OMP_JNJ_CMD_OPTMS_DEV3_utl"  = "D:\OMClient\sptrn\user\SA-ITS-APSMDDINT-TRN\dispatcher\Agent"
-    "OMP_JNJ_CMD_OPTMS_DEV2_utl"  = "D:\OMClient\sptrn\user\SA-ITS-APSMDINT-LAB\dispatcher\ManagementAction"
+    "OMP_JNJ_MD_OMEGA_LAB_utl" 		= "D:\OMClient\development\user\SA-ITS-APSOMINT-LAB\dispatcher\Agent"
+    "OMP_JNJ_MD_GET_PREDEV5_utl"    = "D:\OMClient\spdevelopment5\user\SA-ITS-APSMDINT-DEV5\dispatcher\Agent"
+    "OMP_JNJ_MD_OMEGA_DEV2_utl"     = "D:\OMClient\spdevelopment\user\sa-its-apsmdint-dev1\dispatcher\Agent"
+    "OMP_JNJ_MD_OMEGA_DEV4_utl"     = "D:\OMClient\sptrn\user\SA-ITS-APSMDDINT-TRN\dispatcher\Agent"
+    "OMP_JNJ_MD_GET_DEV5_utl"       = "D:\OMClient\sptrn\user\SA-ITS-APSMDINT-LAB\dispatcher\ManagementAction"
+	#"OMP_JNJ_MD_OMEGA_PREDEV2_utl"  = "D:\OMClient\sptrn\user\SA-ITS-APSMDINT-LAB\dispatcher\ManagementAction"
+	
 }
 
 # Python executable path
-$PythonExe = "C:\Users\SA-ITS-APSOTINT-LAB\AppData\Local\Programs\Python\Python312\python.exe"
-$dbStatusFile = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\log\db_status.txt"
+$PythonExe = "C:\Users\SA-ITS-APSOMINT-LAB\AppData\Local\Programs\Python\Python313\python.exe"
+$dbStatusFile = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\log\db_status.txt"
 
 # SMTP / Email
 $SmtpServer = "SMTP.EU.JNJ.COM"
-$From = "SA-ITS-APSOTINT-LAB@its.jnj.com"
+$From = "SA-ITS-APSOMINT-LAB@its.jnj.com"
 $ToInitial = "GYELLAP1@its.jnj.com"
 $ToEPPS = "GYELLAP1@its.jnj.com"
 
 # Base log folder & filename
-$LogFolder = "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\log"
+$LogFolder = "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\log"
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $LogPath = Join-Path $LogFolder "agent_health_log_$timestamp.txt"
 
@@ -60,7 +66,7 @@ function Write-Log {
     param([string]$Message)
     $time = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $line = "[$time] $Message"
-    Write-Output $line
+    Write-Host $line
     $line | Out-File -Append -FilePath $LogPath -Encoding UTF8
 }
 
@@ -114,7 +120,7 @@ function Backup-OutFiles {
         Write-Log "WARNING: Mandatory files not found for $Agent. Waiting 1 minute and retrying..."
         Start-Sleep -Seconds 60
 
-        $cutoffTime = (Get-Date).AddMinutes(-200)
+        $cutoffTime = (Get-Date).AddHours(-24)
         $result = Get-ValidSource -cutoffTime $cutoffTime
 
         if (-not $result) {
@@ -157,7 +163,7 @@ primary and secondary paths even after <b>1 minute retry</b>.<br/><br/>
     $allFiles = Get-ChildItem $SourcePath -File -ErrorAction SilentlyContinue |
                 Where-Object {
                     $_.LastWriteTime -ge $cutoffTime -and
-                    $_.Extension -in ".out",".tsv",".wrn",".err"
+                    $_.Extension -in ".OUT",".tsv",".wrn",".err"
                 }
 
     foreach ($f in $allFiles) {
@@ -206,7 +212,7 @@ function Run-DbBatch {
     }
 
     # Load encrypted password
-    $SecurePass = Get-Content "\\awsusdmlfsxn01.jnj.com\opt_pdev3_omp_na\OMP_JNJ_CMD_OPTMS_LAB\OMPartners\development\dispatcher\bin\Automation\Agent\devdbpass.txt" | ConvertTo-SecureString
+    $SecurePass = Get-Content "\\awsusdmjfsxn01.jnj.com\eth_get_dev_omp\OMP_JNJ_MD_OMEGA_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1\devdbpass.txt" | ConvertTo-SecureString
     $PlainPass  = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
                     [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePass)
                   )
