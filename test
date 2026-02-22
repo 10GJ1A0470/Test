@@ -34,7 +34,7 @@ from email import encoders
 #    logging.error("Error: Environment variable 'OMP_pass' not found!")
 #    sys.exit(1)
 
-NETWORK_DIR = Path(r"path1\log")
+NETWORK_DIR = Path(r"\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\log")
 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 log_filename = NETWORK_DIR / f"log_{timestamp}.txt"
 
@@ -108,15 +108,18 @@ def stop_dispatcher(dispatcher_path):
         logging.error("Failed to stop Dispatcher.")
 
 
-def industry_solution_build(omp_app):
-    try:
-        max_retries = 2  # Maximum number of retries
-        attempt = 0
+def industry_solution_build(omp_app, expected_path, max_retries=2):
+    attempt = 0
 
-        while attempt <= max_retries:
-            attempt += 1
-            logging.info(f"Attempt {attempt} of {max_retries}...")
+    while attempt < max_retries:
+        logging.info(f"Attempt {attempt + 1} to run Base Solution Build...")
 
+        try:
+            # Step 1: Count existing CMD windows
+            initial_cmd_count = count_cmd_windows()
+            logging.info(f"Initial CMD window count: {initial_cmd_count}")
+
+            # Step 2: Trigger Base Build from OMP
             omp_window = omp_app.top_window()
             omp_window.set_focus()
             time.sleep(1)
@@ -178,19 +181,22 @@ def industry_solution_build(omp_app):
         logging.error(f"Error during Industry Solution Build: {e}")
                                 
 
-def proejct_solution_build(omp_app):
-    try:
-        max_retries = 2  # Maximum number of retries
-        attempt = 0
+def proejct_solution_build(omp_app, expected_path, max_retries=2):
+    attempt = 0
 
-        while attempt <= max_retries:
-            attempt += 1
-            logging.info(f"Attempt {attempt} of {max_retries}...")
+    while attempt < max_retries:
+        logging.info(f"Attempt {attempt + 1} to run Base Solution Build...")
 
+        try:
+            # Step 1: Count existing CMD windows
+            initial_cmd_count = count_cmd_windows()
+            logging.info(f"Initial CMD window count: {initial_cmd_count}")
+
+            # Step 2: Trigger Base Build from OMP
             omp_window = omp_app.top_window()
             omp_window.set_focus()
             time.sleep(1)
-
+            
             logging.info("Sending Alt + U...")
             omp_window.type_keys('%u')
             time.sleep(2)
@@ -249,12 +255,13 @@ def proejct_solution_build(omp_app):
                                 
 
 def schema_pass():
-    load_dotenv(r"\.env")
+    load_dotenv(r"\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\.env")
     
     schema_keys = [
-        "_QA2_OPR",
-        "_QA2_FCT",
-        "_QA2_UTL"
+        "OMP_JNJ_MD_ATOM_LAB_OPR",
+        "OMP_JNJ_MD_ATOM_LAB_SOP",
+        "OMP_JNJ_MD_ATOM_LAB_FCT",
+        "OMP_JNJ_MD_ATOM_LAB_UTL"
     ]
 
     for key in schema_keys:
@@ -439,39 +446,39 @@ def validate_version_details(file_path, expected_version):
 
                             
 
-def send_email(subject, body, file_path):
-    try:
-        from_addr =          
-        to_addrs = []         
-        smtp_server = ""              #  your SMTP relay
-        smtp_port =                                # mostly 25 or 587
-
-        msg = MIMEMultipart()
-        msg["From"] = from_addr
-        msg["To"] = ", ".join(to_addrs)
-        msg["Subject"] = subject
-        msg.attach(MIMEText(body, "plain"))
-
-        if os.path.exists(file_path):
-            with open(file_path, "rb") as f:
-                part = MIMEBase("application", "octet-stream")
-                part.set_payload(f.read())
-                encoders.encode_base64(part)
-                part.add_header(
-                    "Content-Disposition",
-                    f"attachment; filename={os.path.basename(file_path)}",
-                )
-                msg.attach(part)
-
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.sendmail(from_addr, to_addrs, msg.as_string())
-
-        logging.info(f" Email sent successfully with {file_path}")
-    except Exception as e:
-        logging.error(f" Failed to send email: {e}")                          
+#def send_email(subject, body, file_path):
+#    try:
+#        from_addr =          
+#        to_addrs = []         
+#        smtp_server = ""              #  your SMTP relay
+#        smtp_port =                                # mostly 25 or 587
+#
+#        msg = MIMEMultipart()
+#        msg["From"] = from_addr
+#        msg["To"] = ", ".join(to_addrs)
+#        msg["Subject"] = subject
+#        msg.attach(MIMEText(body, "plain"))
+#
+#        if os.path.exists(file_path):
+#            with open(file_path, "rb") as f:
+#                part = MIMEBase("application", "octet-stream")
+#                part.set_payload(f.read())
+#                encoders.encode_base64(part)
+#                part.add_header(
+#                    "Content-Disposition",
+#                    f"attachment; filename={os.path.basename(file_path)}",
+#                )
+#                msg.attach(part)
+#
+#        with smtplib.SMTP(smtp_server, smtp_port) as server:
+#            server.sendmail(from_addr, to_addrs, msg.as_string())
+#
+#        logging.info(f" Email sent successfully with {file_path}")
+#    except Exception as e:
+#        logging.error(f" Failed to send email: {e}")                          
 
 def main_launcher():
-    excel_file = r"path3\PAK_Standard_requirement.xlsx"
+    excel_file = r"\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\PAK\K\PAK_Standard_requirement.xlsx"
     try:
         df = pd.read_excel(excel_file, sheet_name=1)
     except Exception as e:
@@ -533,10 +540,10 @@ def main_launcher():
                                                 
 if __name__ == "__main__":
     main_launcher()
-    send_email(
-        subject="OMP Deployment SUCCESS",
-        body="Deployment completed successfully with Automation. Please check attached logs.",
-        file_path=str(log_filename)
-    )
+    #send_email(
+    #    subject="OMP Deployment SUCCESS",
+    #    body="Deployment completed successfully with Automation. Please check attached logs.",
+    #    file_path=str(log_filename)
+    #)
 
     
