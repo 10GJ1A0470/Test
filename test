@@ -34,7 +34,7 @@ from email import encoders
 #    logging.error("Error: Environment variable 'OMP_pass' not found!")
 #    sys.exit(1)
 
-NETWORK_DIR = Path(r"path1\log)
+NETWORK_DIR = Path(r"path1\log")
 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 log_filename = NETWORK_DIR / f"log_{timestamp}.txt"
 
@@ -55,66 +55,57 @@ def count_cmd_windows():
             if "cmd.exe" in win32gui.GetWindowText(w).lower() or
             "command prompt" in win32gui.GetWindowText(w).lower()
         ])
-    except exception as e:
+    except Exception as e:
         logging.error(f"Error counting CMD windows: {e}")
         return 0
 
 
                 
-def launching_OMP():
-    script_path = r"path2\OMPartners_menu.cmd  # Replace with actual script nam
-
+def launching_OMP(launch_path):
     try:
-        if os.path.exists(script_path):
-            # Try launching the script
-            logging.info(f"Launching OMP application from: {script_path}")
-            subprocess.Popen(script_path, shell=True)
-            
-            logging.info("OMP application launch Initiated.")
-            time.sleep(20)
-        
-            
+        if not os.path.exists(launch_path):
+            logging.error(f"OMP script not found at {launch_path}")
+            return None
 
-            # Check if OMP Plus is already running
-            omp_app = None
-            for _ in range(5):
-                try:
-                    windows = findwindows.find_windows(title_re=".*OMP.*", backend='win32')
-                    if windows:
-                        omp_app = Application().connect(handle=windows[0])
-                        logging.info("OMP Plus application detected.")
-                        break
-                except Exception as e:
-                    logging.info("OMP Plus not running yet, retrying...")
-                time.sleep(10)
+        logging.info(f"Launching OMP from: {launch_path}")
+        subprocess.Popen(launch_path, shell=True)
+        time.sleep(20)
 
-            if not omp_app:
-                logging.error("OMP Plus did not launch!")
-                exit(1)
+        omp_app = None
+        for _ in range(5):
+            try:
+                windows = findwindows.find_windows(title_re=".*OMP.*", backend='win32')
+                if windows:
+                    omp_app = Application().connect(handle=windows[0])
+                    logging.info("OMP application detected.")
+                    break
+            except Exception:
+                logging.info("OMP not running yet, retrying...")
+            time.sleep(10)
 
-            return omp_app
+        if not omp_app:
+            logging.error("OMP did not launch!")
+            return None
+
+        return omp_app
 
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logging.error(f"Error launching OMP: {e}")
+        return None
+
+
+# -------------------- STOP DISPATCHER --------------------
 
 def stop_dispatcher(dispatcher_path):
-# Path to your script folder
-                
-                
-                # Command to run
-                cmd = "DispatcherManagementAction.cmd stop /all"
-                
-                # Full command
-                full_command = f'pushd {dispatcher_path} && {cmd}'
-                
-                # Run the command in CMD
-                process = subprocess.run(full_command, shell=True, text=True)
-                
-                # Optional: check return code
-                if process.returncode == 0:
-                                logging.info("Dispatcher stopped successfully.")
-                else:
-                                logging.info("Failed to stop Dispatcher.") 
+    cmd = "DispatcherManagementAction.cmd stop /all"
+    full_command = f'pushd "{dispatcher_path}" && {cmd}'
+
+    process = subprocess.run(full_command, shell=True)
+
+    if process.returncode == 0:
+        logging.info("Dispatcher stopped successfully.")
+    else:
+        logging.error("Failed to stop Dispatcher.")
 
 
 def industry_solution_build(omp_app):
@@ -258,7 +249,7 @@ def proejct_solution_build(omp_app):
                                 
 
 def schema_pass():
-    load_dotenv(r"\.env)
+    load_dotenv(r"\.env")
     
     schema_keys = [
         "_QA2_OPR",
@@ -333,7 +324,7 @@ def wait_for_update_installer_and_information():
 
         if not update_installer_found:
             attempts += 1
-            logging.info("Update Installer not found yet. Retrying in 10 seconds..(Attempt {attempts}/{max_attempts})")
+            logging.info(f"Update Installer not found yet. Retrying in 10 seconds..(Attempt {attempts}/{max_attempts})")
             time.sleep(10)
     if not update_installer_found:
         logging.info("Update Installer not found after maximum attempts. Proceeding with the next steps.")
@@ -398,7 +389,7 @@ def handle_notepad_if_opened(notepad_window):
         time.sleep(2)
 
         # Save file in log as failed_logs.txt
-        failed_file = r"path1\failed_logs_ + time.strftime("%Y-%m-%d_%H-%M-%S") + ".txt"
+        failed_file = r"path1\failed_logs_" + time.strftime("%Y-%m-%d_%H-%M-%S") + ".txt"
         pyautogui.hotkey("ctrl", "s")
         time.sleep(2)
         pyautogui.write(failed_file)
@@ -480,7 +471,7 @@ def send_email(subject, body, file_path):
         logging.error(f" Failed to send email: {e}")                          
 
 def main_launcher():
-    excel_file = r"path3\PAK_Standard_requirement.xlsx
+    excel_file = r"path3\PAK_Standard_requirement.xlsx"
     try:
         df = pd.read_excel(excel_file, sheet_name=1)
     except Exception as e:
@@ -497,8 +488,8 @@ def main_launcher():
 
         if requirement == "Y":
             if "launch omp" in action:
-                logging.info("Launching OMP")
-                omp_app = launching_OMP()
+                launch_path = inputs
+                omp_app = launching_OMP(launch_path)
 
             elif "stop dispatcher" in action:
                 logging.info("Executing Stop Dispatcher")
