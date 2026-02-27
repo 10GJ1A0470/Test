@@ -1,46 +1,107 @@
-function Run-DbBatch {
-    param($Path)
+@echo off
+setlocal enabledelayedexpansion
+
+:: === DB CONFIG ===
+set DB_USER=PAKDB_USER
+set DB_PASS=pkusr_2025_aTmSPD3v
+set DB_TNS=DNV24001
+echo Incoming arg: %1
+echo DB_USER=%DB_USER%
+echo DB_PASS=%DB_PASS%
+echo DB_TNS=%DB_TNS%
+
+:: === FINAL DIR ON NETWORK ===
+set FINAL_DIR=\\awsusdmkfsxn01.jnj.com\mdd_tst_omp\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1
+set SELECT_FILE=%FINAL_DIR%\select_output.txt
+set DELETE_SQL=%FINAL_DIR%\delete.sql
+set OUTPUT_FILE=%FINAL_DIR%\result_output.txt
+set SELECT_SQL=%FINAL_DIR%\select.sql
+
+:: === Step 1: Create SELECT SQL File ===
+(
+echo set heading off
+echo set feedback off
+echo set pagesize 0
+echo set trimspool on
+echo set colsep '^|'
+echo SELECT OSUSERID ^|^| '^|' ^|^| DBSID ^|^| '^|' ^|^| DBUSERID ^|^| '^|' ^|^| COMPUTERID FROM OMP_JNJ_MD_ATOM_LAB_UTL.LOCKS WHERE DBSID NOT IN ^(SELECT AUDSID FROM V^$SESSION WHERE STATUS LIKE '%%ACTIVE'^);
+echo exit;
+) > "%SELECT_SQL%"
+
+if not exist "%SELECT_SQL%" (
+    echo ERROR: Failed to create SELECT SQL script.
+    exit /b 1
+)
+
+:: === Step 2: Run SELECT and store output ===
+sqlplus -s "%DB_USER%/%DB_PASS%@%DB_TNS%" @"%SELECT_SQL%" > "%SELECT_FILE%"
+
+if errorlevel 1 (
+    echo ERROR: SELECT query failed.
+    exit /b 1
+)
+
+:: === Step 3: Remove warning/error lines from SELECT output ===
+findstr /V /C:"ERROR:" /C:"ORA-" "%SELECT_FILE%" > "%SELECT_FILE%.tmp"
+move /Y "%SELECT_FILE%.tmp" "%SELECT_FILE%" >nul
+
+:: === Step 4: Check if rows exist ===
+findstr /r "." "%SELECT_FILE%" >nul
+if errorlevel 1 (
+    echo No LOCK entries detected. > "%OUTPUT_FILE%"
+) else (
+    :: === Step 5: Generate DELETE SQL ===
+    > "%DELETE_SQL%" (
+        echo set feedback off
+        echo set heading off
+    )
+
+    for /f "tokens=1-4 delims=|" %%a in (%SELECT_FILE%) do (
+        set "osid=%%a"
+        set "dbsid=%%b"
+        set "dbuserid=%%c"
+        set "compid=%%d"
+
+        :: Trim spaces
+        for /f "tokens=* delims= " %%x in ("!osid!") do set "osid=%%x"
+        for /f "tokens=* delims= " %%x in ("!dbsid!") do set "dbsid=%%x"
+        for /f "tokens=* delims= " %%x in ("!dbuserid!") do set "dbuserid=%%x"
+        for /f "tokens=* delims= " %%x in ("!compid!") do set "compid=%%x"
+
+        :: Skip if DBSID is empty
+        if defined dbsid (
+            >> "%DELETE_SQL%" echo DELETE FROM OMP_JNJ_MD_ATOM_LAB_UTL.LOCKS WHERE OSUSERID = '!osid!' AND DBSID = !dbsid! AND DBUSERID = '!dbuserid!' AND COMPUTERID = '!compid!';
+        )
+    )
+
+    >> "%DELETE_SQL%" echo exit;
+
+    :: === Step 6: Run DELETE ===
+    echo === Selected Rows === > "%OUTPUT_FILE%"
+    type "%SELECT_FILE%" >> "%OUTPUT_FILE%"
+
+    echo. >> "%OUTPUT_FILE%"
+    echo === Delete Execution === >> "%OUTPUT_FILE%"
+    sqlplus -s %DB_USER%/"%DB_PASS%"@%DB_TNS% @"%DELETE_SQL%" >> "%OUTPUT_FILE%"
     
-    if (-not (Test-Path $Path)) { 
-        Write-Log "DB batch not found: $Path"
-        return $false 
-    }
+    if errorlevel 1 (
+        echo ERROR: DELETE query failed.
+        exit /b 1
+    )
+)
 
-    # Load encrypted password
-    $SecurePass = Get-Content "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\Automation Script\Agent_Monitoring\devdbpass.txt" | ConvertTo-SecureString
-    $PlainPass  = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
-                    [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePass)
-                  )
+:: === Step 7: Save to db_status.txt ===
+copy "%OUTPUT_FILE%" "%FINAL_DIR%\db_status.txt" /Y >nul
+if errorlevel 1 (
+    echo ERROR: Failed to copy output to db_status.txt
+    exit /b 1
+)
 
-    Write-Log "Running DB batch via CMD (timeout 60s): $Path"
+:: === Step 8: Clean up ===
+del "%SELECT_SQL%" >nul 2>&1
+del "%SELECT_FILE%" >nul 2>&1
+del "%DELETE_SQL%" >nul 2>&1
+del "%OUTPUT_FILE%" >nul 2>&1
 
-    Start-Process -FilePath $Path `
-                  -ArgumentList $PlainPass `
-                  -NoNewWindow -ErrorAction SilentlyContinue | Out-Null
-
-    # Wait max 60 seconds for db_status.txt to appear
-    $stopwatch = [Diagnostics.Stopwatch]::StartNew()
-    while (-not (Test-Path $dbStatusFile) -and $stopwatch.Elapsed.TotalSeconds -lt 60) {
-        Start-Sleep -Seconds 2
-    }
-    $stopwatch.Stop()
-
-    if (Test-Path $dbStatusFile) {
-        Write-Log "----- DB Script Output Start -----"
-        Get-Content $dbStatusFile | ForEach-Object { Write-Log $_ }
-        Write-Log "----- DB Script Output End -----"
-        return $true
-    }
-    else {
-        Write-Log "ERROR: db_status.txt not created within 60 seconds. Possible DB login/password issue."
-
-        $HostName = $env:COMPUTERNAME
-        $HtmlBody = "<h2 style='color:red'>CRITICAL: DB Login Timeout</h2>
-        <p style='color:red'>Failed to Login DB/Remove Inactive Lock Sessions on $HostName.<br/>
-        Please check DB password and login issues.</p>"
-        Send-EmailHtml -Subject "CRITICAL: DB Login Timeout on $HostName" -HtmlBody $HtmlBody -Recipients $ToInitial
-
-        Write-Log "DB login timeout. Stopping script."
-        exit 1
-    }
-}
+endlocal
+exit /b 0
