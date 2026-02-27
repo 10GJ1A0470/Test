@@ -1,1 +1,46 @@
-sqlplus PAKDB_USER/pkusr_2025_aTmSPD3v@DNV24001
+function Run-DbBatch {
+    param($Path)
+    
+    if (-not (Test-Path $Path)) { 
+        Write-Log "DB batch not found: $Path"
+        return $false 
+    }
+
+    # Load encrypted password
+    $SecurePass = Get-Content "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\Automation Script\Agent_Monitoring\devdbpass.txt" | ConvertTo-SecureString
+    $PlainPass  = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
+                    [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePass)
+                  )
+
+    Write-Log "Running DB batch via CMD (timeout 60s): $Path"
+
+    Start-Process -FilePath $Path `
+                  -ArgumentList $PlainPass `
+                  -NoNewWindow -ErrorAction SilentlyContinue | Out-Null
+
+    # Wait max 60 seconds for db_status.txt to appear
+    $stopwatch = [Diagnostics.Stopwatch]::StartNew()
+    while (-not (Test-Path $dbStatusFile) -and $stopwatch.Elapsed.TotalSeconds -lt 60) {
+        Start-Sleep -Seconds 2
+    }
+    $stopwatch.Stop()
+
+    if (Test-Path $dbStatusFile) {
+        Write-Log "----- DB Script Output Start -----"
+        Get-Content $dbStatusFile | ForEach-Object { Write-Log $_ }
+        Write-Log "----- DB Script Output End -----"
+        return $true
+    }
+    else {
+        Write-Log "ERROR: db_status.txt not created within 60 seconds. Possible DB login/password issue."
+
+        $HostName = $env:COMPUTERNAME
+        $HtmlBody = "<h2 style='color:red'>CRITICAL: DB Login Timeout</h2>
+        <p style='color:red'>Failed to Login DB/Remove Inactive Lock Sessions on $HostName.<br/>
+        Please check DB password and login issues.</p>"
+        Send-EmailHtml -Subject "CRITICAL: DB Login Timeout on $HostName" -HtmlBody $HtmlBody -Recipients $ToInitial
+
+        Write-Log "DB login timeout. Stopping script."
+        exit 1
+    }
+}
