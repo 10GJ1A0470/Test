@@ -1,46 +1,72 @@
-function Run-DbBatch {
-    param($Path)
-    
-    if (-not (Test-Path $Path)) { 
-        Write-Log "DB batch not found: $Path"
-        return $false 
-    }
+C:\Users\SA-ITS-APSMDAUT-NPD>hostname
+awsdmknvaw0002
 
-    # Load encrypted password
-    $SecurePass = Get-Content "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\Automation Script\Agent_Monitoring\devdbpass.txt" | ConvertTo-SecureString
-    $PlainPass  = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
-                    [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePass)
-                  )
+C:\Users\SA-ITS-APSMDAUT-NPD>python \\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\spdevelopment\dispatcher\bin\ATOM_SP_DEV_Dispatcher.py
+2026-02-27 04:40:31,294 - INFO -
+ Running task on AWSDMKNVAW0007: OMPDispatcher\OMP_JNJ_MD_ATOMSP_DEV_DSPAgent
+2026-02-27 04:40:31,994 - INFO -  Success on AWSDMKNVAW0007
+2026-02-27 04:40:31,995 - INFO -
+ Running task on AWSDMKNVAW0002: OMPDispatcher\OMP_JNJ_MD_ATOMSP_DEV_DSPAgent
+2026-02-27 04:40:32,085 - INFO -  Failed on AWSDMKNVAW0002: ERROR: Access is denied.
 
-    Write-Log "Running DB batch via CMD (timeout 60s): $Path"
+C:\Users\SA-ITS-APSMDAUT-NPD>
 
-    Start-Process -FilePath $Path `
-                  -ArgumentList $PlainPass `
-                  -NoNewWindow -ErrorAction SilentlyContinue | Out-Null
 
-    # Wait max 60 seconds for db_status.txt to appear
-    $stopwatch = [Diagnostics.Stopwatch]::StartNew()
-    while (-not (Test-Path $dbStatusFile) -and $stopwatch.Elapsed.TotalSeconds -lt 60) {
-        Start-Sleep -Seconds 2
-    }
-    $stopwatch.Stop()
 
-    if (Test-Path $dbStatusFile) {
-        Write-Log "----- DB Script Output Start -----"
-        Get-Content $dbStatusFile | ForEach-Object { Write-Log $_ }
-        Write-Log "----- DB Script Output End -----"
-        return $true
-    }
-    else {
-        Write-Log "ERROR: db_status.txt not created within 60 seconds. Possible DB login/password issue."
 
-        $HostName = $env:COMPUTERNAME
-        $HtmlBody = "<h2 style='color:red'>CRITICAL: DB Login Timeout</h2>
-        <p style='color:red'>Failed to Login DB/Remove Inactive Lock Sessions on $HostName.<br/>
-        Please check DB password and login issues.</p>"
-        Send-EmailHtml -Subject "CRITICAL: DB Login Timeout on $HostName" -HtmlBody $HtmlBody -Recipients $ToInitial
+import subprocess
+import socket
+import requests
+import time
+import os
+import logging
+from datetime import datetime
 
-        Write-Log "DB login timeout. Stopping script."
-        exit 1
-    }
-}
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        #logging.FileHandler(log_filename),
+        logging.StreamHandler()
+    ]
+)
+
+username = r"NA\SA-ITS-APSMDINT-DEV1"
+password = os.getenv('Agent_key')
+
+# Get local machine name
+local_machine = socket.gethostname().upper()
+
+# Define tasks
+tasks = [
+#    ("AWSDMKNVAW0007", r"OMPDispatcher\OMP_JNJ_MD_ATOMSP_DEV"),
+    ("AWSDMKNVAW0007", r"OMPDispatcher\OMP_JNJ_MD_ATOMSP_DEV_DSPAgent"),
+    ("AWSDMKNVAW0002", r"OMPDispatcher\OMP_JNJ_MD_ATOMSP_DEV_DSPAgent"),
+#    ("AWSDMKNVAW0003", r"OMPDispatcher\OMP_JNJ_MD_ATOMSP_DEV_DSPAgent"),
+ #   ("AWSDMKNVAW0004", r"OMPDispatcher\OMP_JNJ_MD_ATOMSP_DEV_DSPAgent"),
+]
+
+for machine, task in tasks:
+    logging.info(f"\n Running task on {machine}: {task}")
+
+    if machine.upper() == local_machine:
+        # Run without credentials on local machine
+        result = subprocess.run([
+            "schtasks.exe", "/run",
+            "/TN", task
+        ], capture_output=True, text=True)
+    else:
+        # Run with credentials on remote machines
+        result = subprocess.run([
+            "schtasks.exe", "/run",
+            "/S", machine,
+            "/U", username,
+            "/P", password,
+            "/TN", task
+        ], capture_output=True, text=True)
+
+    if result.returncode != 0:
+        logging.info(f" Failed on {machine}: {result.stderr.strip()}")
+    else:
+        logging.info(f" Success on {machine}")
