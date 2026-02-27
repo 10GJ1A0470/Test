@@ -1,29 +1,46 @@
-PS C:\Windows\system32> \\awsusdmkfsxn01.jnj.com\mdd_omp_dev\Automation Script\Agent_Monitoring\AWSDMKNVAW0002\Agent_db_restart_email_latest9.ps1
-[2026-02-26 21:26:23] Starting Agent Health check...
-[2026-02-26 21:26:24] Starting backup for agent: OMP_JNJ_MD_ATOMSP_DEV1_utl
-[2026-02-26 21:26:24] Primary path found for OMP_JNJ_MD_ATOMSP_DEV1_utl : \\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\omdata\spdevelopment\dispatcher\Agent
-[2026-02-26 21:26:24] Secondary path found for OMP_JNJ_MD_ATOMSP_DEV1_utl : D:\OMClient\spdevelopment\user\sa-its-apsmdint-dev1\dispatcher\Agent
-[2026-02-26 21:26:24] Created backup folder: D:\OMPdump\FRM_Backup\AWSDMKNVAW0002_20260226_212624
-[2026-02-26 21:26:24] Waiting 120 seconds before starting backup to allow secondary path files to update...
-[2026-02-26 21:26:34] Backup process started after wait.
-[2026-02-26 21:26:36] BACKUP SUCCESS [OMP_JNJ_MD_ATOMSP_DEV1_utl] : \\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\omdata\spdevelopment\dispatcher\Agent\ompedi
-tor_06_09_035_x64u_AWSDMKNVAW0002_sa-its-apsmdint-dev1_20260226104630.out
-[2026-02-26 21:26:37] BACKUP SUCCESS [OMP_JNJ_MD_ATOMSP_DEV1_utl] : \\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\omdata\spdevelopment\dispatcher\Agent\ompedi
-tor_06_09_035_x64u_AWSDMKNVAW0007_SA-ITS-APSMDINT-DEV1_20260226110251.err
-[2026-02-26 21:26:37] BACKUP SUCCESS [OMP_JNJ_MD_ATOMSP_DEV1_utl] : \\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\omdata\spdevelopment\dispatcher\Agent\ompedi
-tor_06_09_035_x64u_AWSDMKNVAW0007_SA-ITS-APSMDINT-DEV1_20260226110251.wrn
-[2026-02-26 21:26:37] BACKUP SUCCESS [OMP_JNJ_MD_ATOMSP_DEV1_utl] : \\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\omdata\spdevelopment\dispatcher\Agent\ompedi
-tor_06_09_035_x64u_AWSDMKNVAW0007_SA-ITS-APSMDINT-DEV1_20260226110504.err
-[2026-02-26 21:26:37] BACKUP SUCCESS [OMP_JNJ_MD_ATOMSP_DEV1_utl] : \\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\omdata\spdevelopment\dispatcher\Agent\ompedi
-tor_06_09_035_x64u_AWSDMKNVAW0007_SA-ITS-APSMDINT-DEV1_20260226110504.wrn
-[2026-02-26 21:26:37] BACKUP SUCCESS [OMP_JNJ_MD_ATOMSP_DEV1_utl] : D:\OMClient\spdevelopment\user\sa-its-apsmdint-dev1\dispatcher\Agent\ompeditor_06_09_035_x64u.err
-[2026-02-26 21:26:37] BACKUP SUCCESS [OMP_JNJ_MD_ATOMSP_DEV1_utl] : D:\OMClient\spdevelopment\user\sa-its-apsmdint-dev1\dispatcher\Agent\ompeditor_06_09_035_x64u.out
-[2026-02-26 21:26:37] BACKUP SUCCESS [OMP_JNJ_MD_ATOMSP_DEV1_utl] : D:\OMClient\spdevelopment\user\sa-its-apsmdint-dev1\dispatcher\Agent\ompeditor_06_09_035_x64u.wrn
-[2026-02-26 21:26:37] BACKUP SUMMARY [OMP_JNJ_MD_ATOMSP_DEV1_utl] : Total files backed up = 8
-[2026-02-26 21:26:37] Backup completed for OMP_JNJ_MD_ATOMSP_DEV1_utl. Folder: D:\OMPdump\FRM_Backup\AWSDMKNVAW0002_20260226_212624
-[2026-02-26 21:26:37] Email sent to GYELLAP1@its.jnj.com: ALERT: Agents DOWN on AWSDMKNVAW0002 - 2026-02-26 21:26
-[2026-02-26 21:26:37] First remediation attempt for OMP_JNJ_MD_ATOMSP_DEV1_utl
-[2026-02-26 21:26:38] Running DB batch via CMD (timeout 60s): \\awsusdmkfsxn01.jnj.com\mdd_omp_dev\Automation Script\Agent_Monitoring\AWSDMKNVAW0002\DEV\dbbat_update.bat
-[2026-02-26 21:26:58] ERROR: db_status.txt not created within 60 seconds. Possible DB login/password issue.
-[2026-02-26 21:26:58] Email sent to GYELLAP1@its.jnj.com: CRITICAL: DB Login Timeout on AWSDMKNVAW0002
-[2026-02-26 21:26:58] DB login timeout. Stopping script.
+function Run-DbBatch {
+    param($Path)
+    
+    if (-not (Test-Path $Path)) { 
+        Write-Log "DB batch not found: $Path"
+        return $false 
+    }
+
+    # Load encrypted password
+    $SecurePass = Get-Content "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\Automation Script\Agent_Monitoring\devdbpass.txt" | ConvertTo-SecureString
+    $PlainPass  = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
+                    [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePass)
+                  )
+
+    Write-Log "Running DB batch via CMD (timeout 60s): $Path"
+
+    Start-Process -FilePath $Path `
+                  -ArgumentList $PlainPass `
+                  -NoNewWindow -ErrorAction SilentlyContinue | Out-Null
+
+    # Wait max 60 seconds for db_status.txt to appear
+    $stopwatch = [Diagnostics.Stopwatch]::StartNew()
+    while (-not (Test-Path $dbStatusFile) -and $stopwatch.Elapsed.TotalSeconds -lt 60) {
+        Start-Sleep -Seconds 2
+    }
+    $stopwatch.Stop()
+
+    if (Test-Path $dbStatusFile) {
+        Write-Log "----- DB Script Output Start -----"
+        Get-Content $dbStatusFile | ForEach-Object { Write-Log $_ }
+        Write-Log "----- DB Script Output End -----"
+        return $true
+    }
+    else {
+        Write-Log "ERROR: db_status.txt not created within 60 seconds. Possible DB login/password issue."
+
+        $HostName = $env:COMPUTERNAME
+        $HtmlBody = "<h2 style='color:red'>CRITICAL: DB Login Timeout</h2>
+        <p style='color:red'>Failed to Login DB/Remove Inactive Lock Sessions on $HostName.<br/>
+        Please check DB password and login issues.</p>"
+        Send-EmailHtml -Subject "CRITICAL: DB Login Timeout on $HostName" -HtmlBody $HtmlBody -Recipients $ToInitial
+
+        Write-Log "DB login timeout. Stopping script."
+        exit 1
+    }
+}
