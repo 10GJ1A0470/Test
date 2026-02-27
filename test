@@ -105,3 +105,13 @@ del "%OUTPUT_FILE%" >nul 2>&1
 
 endlocal
 exit /b 0
+
+
+
+
+
+Z:\OMP_JNJ_MD_ATOM_LAB\OMPartners\development\dispatcher\bin\Automation\Agent_1>dbbat_update.bat
+Incoming arg:
+DB_USER=PAKDB_USER
+DB_PASS=pkusr_2025_aTmSPD3v
+DB_TNS=DNV24001
