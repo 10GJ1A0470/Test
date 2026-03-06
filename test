@@ -1,45 +1,7 @@
-function Check-Agents {
-    param($Agents)
-
-    $cmdLines = wmic process where "name like '%ompeditor%'" get CommandLine /VALUE |
-        Select-String "^CommandLine=" | ForEach-Object {
-            $_.ToString().Replace("CommandLine=", "").Trim()
-        }
-
-    $down = @()
-
-    foreach ($a in $Agents) {
-
-        $matched = $false
-
-        foreach ($c in $cmdLines) {
-
-            if ($c -match [regex]::Escape($a)) {
-                $matched = $true
-                break
-            }
-
-        }
-
-        if (-not $matched) {
-            $down += $a
-        }
-
-    }
-
-    $html = Build-HTMLReport -Title "Agent Status Report" -Agents $Agents -DownAgents $down
-
-    return @{
-        DownAgents = $down
-        Html       = $html
-    }
-}
-
-
-
-
-
-
-$cmdLines = Get-CimInstance Win32_Process |
-            Where-Object { $_.CommandLine -like "*ompeditor*" } |
-            Select-Object -ExpandProperty CommandLine
+PS C:\Users\SA-ITS-APSOMAUT-NPD> \\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\Agent_db_restart_email_latest9.1.ps1
+At \\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\Agent_db_restart_email_latest9.1.ps1:328 char:1
++ }
++ ~
+Unexpected token '}' in expression or statement.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
