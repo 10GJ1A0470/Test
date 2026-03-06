@@ -1,7 +1,453 @@
+# ---------------- CONFIGURATION ----------------
+$ExpectedAgents = @(
+    "OMP_JNJ_MD_OMEGA_DEV2_utl",
+	"OMP_JNJ_MD_GET_DEV5_utl",
+    "OMP_JNJ_MD_GET_PREDEV5_utl",
+    "OMP_JNJ_MD_OMEGA_PREDEV4_utl",
+	"OMP_JNJ_MD_OMEGA_DEV4_utl"
+)
+
+
+# Mapping: DB batch (.bat) and start script (.py)
+$AgentScripts = @{
+    "OMP_JNJ_MD_GET_DEV5_utl"    = @{ DB = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\DEV5\dbbat_update.bat"; Start = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\DEV5\OMEGA_DEV5.py" }
+    "OMP_JNJ_MD_OMEGA_DEV2_utl"   = @{ DB = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\DEV2\dbbat_update.bat"; Start = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\DEV2\OMEGA_DEV2.py" }
+    "OMP_JNJ_MD_GET_PREDEV5_utl"    = @{ DB = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\PREDEV5\dbbat_update.bat"; Start = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\PREDEV5\OMEGA_PREDEV5.py" }
+    "OMP_JNJ_MD_OMEGA_PREDEV4_utl"= @{ DB = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\PREDEV4\dbbat_update.bat"; Start = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\PREDEV4\OMEGA_PREDEV4.py" }
+	"OMP_JNJ_MD_OMEGA_DEV4_utl"    = @{ DB = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\DEV4\dbbat_update.bat"; Start = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\DEV4\OMEGA_DEV4.py" }
+
+}
+
+$primaryoutfile_path = @{
+    "OMP_JNJ_MD_OMEGA_PREDEV4_utl" = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_PREDEV4\OMPartners\omdata\predev4\dispatcher\Agent"
+    "OMP_JNJ_MD_OMEGA_DEV2_utl"    = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\omdata\development2\dispatcher\Agent"
+    "OMP_JNJ_MD_GET_DEV5_utl"     = "\\awsusdmkfsxn01.jnj.com\mdd_omp_dev\OMP_JNJ_MD_ATOMSP_DEV\OMPartners\omdata\spdevelopment\dispatcher\Agent"
+    "OMP_JNJ_MD_GET_PREDEV5_utl"     = "\\awsusdmkfsxn01.jnj.com\mdd_trn_omp\OMP_JNJ_MD_ATOMSP_TRN\OMPartners\omdata\sptrn\dispatcher\Agent"
+    "OMP_JNJ_MD_OMEGA_DEV4_utl" = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV4\OMPartners\omdata\development4\dispatcher\Agent"
+
+}
+
+$secondaryoutfile_path = @{ 
+    "OMP_JNJ_MD_OMEGA_PREDEV4_utl" = "D:\OMClient\predev4\user\SA-ITS-APSOMINT-DEV\dispatcher\Agent"
+    "OMP_JNJ_MD_OMEGA_DEV2_utl"    = "D:\OMClient\development2\user\SA-ITS-APSOMINT-DEV\dispatcher\Agent"
+    "OMP_JNJ_MD_GET_DEV5_utl"     = "D:\OMClient\development5\user\SA-ITS-APSGETINT-DEV\dispatcher\Agent"
+    "OMP_JNJ_MD_GET_PREDEV5_utl"     = "D:\OMClient\Predev5\user\SA-ITS-APSGETINT-DEV\dispatcher\Agent"
+    "OMP_JNJ_MD_OMEGA_DEV4_utl" = "D:\OMClient\development4\user\SA-ITS-APSOMINT-DEV\dispatcher\Agent"
+
+}
+
+# Python executable path
+$PythonExe = "C:\Users\SA-ITS-APSOMAUT-NPD\AppData\Local\Programs\Python\Python313\python.exe"
+$dbStatusFile = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\log\db_status.txt"
+
+# SMTP / Email
+$SmtpServer = "SMTP.EU.JNJ.COM"
+$From = "SA-ITS-APSMDAUT-NPD@its.jnj.com"
+$ToInitial = "GYELLAP1@its.jnj.com"
+$ToEPPS = "GYELLAP1@its.jnj.com"
+
+# Base log folder & filename
+$LogFolder = "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\log"
+$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+$LogPath = Join-Path $LogFolder "agent_health_log_$timestamp.txt"
+
+$ReminderCount = 3
+$ReminderIntervalSeconds = 300  # 5 minutes
+
+# Backup paths(New part)
+$backup_path  = "D:\OMPdump\FRM_Backup"
+
+
+# ---------------- FUNCTIONS ----------------
+function Write-Log {
+    param([string]$Message)
+    $time = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $line = "[$time] $Message"
+    Write-Host $line
+    $line | Out-File -Append -FilePath $LogPath -Encoding UTF8
+}
+
+##New part
+
+
+function Backup-OutFiles {
+    param($Agent)
+
+    $PrimaryPath   = $primaryoutfile_path[$Agent]
+    $SecondaryPath = $secondaryoutfile_path[$Agent]
+
+    $HostName  = $env:COMPUTERNAME
+    $cutoffTime = (Get-Date).AddHours(-24)
+
+    $AllSourcePaths = @()
+
+    # Validate paths
+    if ($PrimaryPath -and (Test-Path $PrimaryPath)) {
+        Write-Log "Primary path found for $Agent : $PrimaryPath"
+        $AllSourcePaths += $PrimaryPath
+    }
+
+    if ($SecondaryPath -and (Test-Path $SecondaryPath)) {
+        Write-Log "Secondary path found for $Agent : $SecondaryPath"
+        $AllSourcePaths += $SecondaryPath
+    }
+
+    if ($AllSourcePaths.Count -eq 0) {
+        Write-Log "CRITICAL: Neither Primary nor Secondary path exists for $Agent"
+        exit 1
+    }
+
+    # ---------------- MANDATORY CHECK (.out & .tsv in last 24hrs) ----------------
+
+    $outFiles = @()
+    #$tsvFiles = @()
+
+    foreach ($SourcePath in $AllSourcePaths) {
+
+        $outFiles += Get-ChildItem $SourcePath -Filter "*.out" -File -ErrorAction SilentlyContinue |
+                     Where-Object { $_.LastWriteTime -ge $cutoffTime }
+
+        #$tsvFiles += Get-ChildItem $SourcePath -Filter "*.tsv" -File -ErrorAction SilentlyContinue |
+        #             Where-Object { $_.LastWriteTime -ge $cutoffTime }
+    }
+
+    if ($outFiles.Count -eq 0) {
+
+        Write-Log "WARNING: Mandatory files not found for $Agent. Waiting 1 minute and retrying..."
+        Start-Sleep -Seconds 60
+        $cutoffTime = (Get-Date).AddHours(-24)
+
+        $outFiles = @()
+        #$tsvFiles = @()
+
+        foreach ($SourcePath in $AllSourcePaths) {
+
+            $outFiles += Get-ChildItem $SourcePath -Filter "*.out" -File -ErrorAction SilentlyContinue |
+                         Where-Object { $_.LastWriteTime -ge $cutoffTime }
+
+            #$tsvFiles += Get-ChildItem $SourcePath -Filter "*.tsv" -File -ErrorAction SilentlyContinue |
+            #             Where-Object { $_.LastWriteTime -ge $cutoffTime }
+        }
+
+        if ($outFiles.Count -eq 0) {
+
+            Write-Log "CRITICAL: Mandatory .out still missing for $Agent after retry."
+
+            $HtmlBody = @"
+<h2 style='color:red'>CRITICAL: Mandatory Agent Logs Missing</h2>
+<p>
+Agent <b>$Agent</b> on host <b>$HostName</b><br/>
+No <b>.out</b> and/or <b>.tsv</b> files found in the last <b>24 hours</b>, even after retry.<br/><br/>
+<b>Backup aborted and script terminated.</b>
+</p>
+"@
+
+            Send-EmailHtml `
+                -Subject "CRITICAL: $HostName Agent Logs Missing for $Agent" `
+                -HtmlBody $HtmlBody `
+                -Recipients $ToInitial
+
+            exit 1
+        }
+    }
+
+    # ---------------- CREATE SINGLE BACKUP FOLDER ----------------
+
+    if (-not (Test-Path $backup_path)) {
+        New-Item -ItemType Directory -Path $backup_path -Force | Out-Null
+    }
+
+    $RunTime = Get-Date -Format "yyyyMMdd_HHmmss"
+    $RunBackupFolder = Join-Path $backup_path "${HostName}_${RunTime}"
+    New-Item -ItemType Directory -Path $RunBackupFolder -Force | Out-Null
+
+    Write-Log "Created backup folder: $RunBackupFolder"
+	
+	
+	Write-Log "Waiting 120 seconds before starting backup to allow path files to update..."
+
+	Start-Sleep -Seconds 10
+
+	Write-Log "Backup process started after wait."
+
+    # ---------------- COPY FILES ----------------
+
+    $TotalCopied = 0
+
+    foreach ($SourcePath in $AllSourcePaths) {
+
+        $files = Get-ChildItem $SourcePath -File -ErrorAction SilentlyContinue |
+                 Where-Object {
+                     $_.LastWriteTime -ge $cutoffTime -and
+                     $_.Extension -in ".out",".wrn",".err"
+                 }
+
+        foreach ($f in $files) {
+            Copy-Item $f.FullName (Join-Path $RunBackupFolder $f.Name) -Force
+            Write-Log "BACKUP SUCCESS [$Agent] : $($f.FullName)"
+            $TotalCopied++
+        }
+    }
+
+    Write-Log "BACKUP SUMMARY [$Agent] : Total files backed up = $TotalCopied"
+
+    return $RunBackupFolder
+}
+
+
+
+function Build-HTMLReport {
+    param($Title, $Agents, $DownAgents)
+	$HostName = $env:COMPUTERNAME
+    $html = "<html><body><h2>$Title</h2><h3>Host: $HostName</h3><table border='1'>"
+    foreach ($a in $Agents) {
+        if ($DownAgents -contains $a) {
+            $html += "<tr><td>$a</td><td style='color:red'>DOWN</td></tr>"
+        } else {
+            $html += "<tr><td>$a</td><td style='color:green'>RUNNING</td></tr>"
+        }
+    }
+    $html += "</table></body></html>"
+    return $html
+}
+
+function Send-EmailHtml {
+    param($Subject, $HtmlBody, $Recipients)
+    if ([string]::IsNullOrWhiteSpace($Recipients)) {
+        Write-Log "ERROR: No recipients specified for email: $Subject"
+        return
+    }
+    Send-MailMessage -From $From -To $Recipients -Subject $Subject -Body $HtmlBody -SmtpServer $SmtpServer -BodyAsHtml
+    Write-Log "Email sent to ${Recipients}: ${Subject}"
+}
+
+
+function Run-DbBatch {
+    param($Path)
+    
+    if (-not (Test-Path $Path)) { 
+        Write-Log "DB batch not found: $Path"
+        return $false 
+    }
+
+    # Load encrypted password
+    $SecurePass = Get-Content "\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\devdbpass.txt" | ConvertTo-SecureString
+    $PlainPass  = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
+                    [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePass)
+                  )
+
+    Write-Log "Running DB batch via CMD (timeout 60s): $Path"
+
+    Start-Process -FilePath $Path `
+                  -ArgumentList $PlainPass `
+                  -NoNewWindow -ErrorAction SilentlyContinue | Out-Null
+
+    # Wait max 60 seconds for db_status.txt to appear
+    $stopwatch = [Diagnostics.Stopwatch]::StartNew()
+    while (-not (Test-Path $dbStatusFile) -and $stopwatch.Elapsed.TotalSeconds -lt 60) {
+        Start-Sleep -Seconds 2
+    }
+    $stopwatch.Stop()
+
+    if (Test-Path $dbStatusFile) {
+        Write-Log "----- DB Script Output Start -----"
+        Get-Content $dbStatusFile | ForEach-Object { Write-Log $_ }
+        Write-Log "----- DB Script Output End -----"
+        return $true
+    }
+    else {
+        Write-Log "ERROR: db_status.txt not created within 60 seconds. Possible DB login/password issue."
+
+        $HostName = $env:COMPUTERNAME
+        $HtmlBody = "<h2 style='color:red'>CRITICAL: DB Login Timeout</h2>
+        <p style='color:red'>Failed to Login DB/Remove Inactive Lock Sessions on $HostName.<br/>
+        Please check DB password and login issues.</p>"
+        Send-EmailHtml -Subject "CRITICAL: DB Login Timeout on $HostName" -HtmlBody $HtmlBody -Recipients $ToInitial
+
+        Write-Log "DB login timeout. Stopping script."
+        exit 1
+    }
+}
+
+
+
+function Run-PythonStart {
+    param($PyPath)
+    if (-not (Test-Path $PyPath)) { Write-Log "Python script not found: $PyPath"; return $false }
+    if (-not (Test-Path $PythonExe)) { Write-Log "Python executable not found: $PythonExe"; return $false }
+    Write-Log "Running Python start: $PyPath"
+    
+    $output = & $PythonExe "`"$PyPath`"" 2>&1
+    $output | ForEach-Object { Write-Log "[PY] $_" }
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Log "Python script completed successfully."
+        return $true
+    } else {
+        Write-Log "Python script failed with exit code $LASTEXITCODE."
+        return $false
+    }
+}
+
+function Check-Agents {
+    param($Agents)
+
+    $cmdLines = wmic process where "name like '%ompeditor%'" get CommandLine /VALUE |
+        Select-String "^CommandLine=" | ForEach-Object {
+            $_.ToString().Replace("CommandLine=", "").Trim()
+        }
+
+    $down = @()
+
+    foreach ($a in $Agents) {
+
+        $matched = $false
+
+        foreach ($c in $cmdLines) {
+
+            if ($c -match [regex]::Escape($a)) {
+                $matched = $true
+                break
+            }
+
+        }
+
+        if (-not $matched) {
+            $down += $a
+        }
+
+    }
+
+    $html = Build-HTMLReport -Title "Agent Status Report" -Agents $Agents -DownAgents $down
+
+    return @{
+        DownAgents = $down
+        Html       = $html
+    }
+}
+
+
+# ---------------- MAIN ----------------
+Write-Log "Starting Agent Health check..."
+
+# Always delete old db_status.txt before fresh run
+
+if (Test-Path $dbStatusFile) {
+    Remove-Item $dbStatusFile -Force -ErrorAction SilentlyContinue
+    Write-Log "Old db_status.txt deleted."
+}
+
+# Initial check
+$initial = Check-Agents -Agents $ExpectedAgents
+$downAgents = $initial.DownAgents
+
+if ($downAgents.Count -eq 0) {
+    Write-Log "All agents running. Exiting."
+    exit 0
+}
+
+# BACKUP STEP (New part)
+$LatestBackupPath = $null
+
+foreach ($agent in $downAgents) {
+
+    Write-Log "Starting backup for agent: $agent"
+
+    $BackupPathReturned = Backup-OutFiles -Agent $agent
+
+    if ($BackupPathReturned) {
+        Write-Log "Backup completed for $agent. Folder: $BackupPathReturned"
+        $LatestBackupPath = $BackupPathReturned
+    }
+    else {
+        Write-Log "Backup FAILED or skipped for $agent"
+    }
+}
+
+
+$HostName = $env:COMPUTERNAME
+Send-EmailHtml -Subject "ALERT: Agents DOWN on $HostName - $(Get-Date -Format 'yyyy-MM-dd HH:mm')" -HtmlBody $initial.Html -Recipients $ToInitial
+
+# --- First remediation attempt ---
+foreach ($agent in $downAgents) {
+    Write-Log "First remediation attempt for $agent"
+    Run-DbBatch -Path $AgentScripts[$agent].DB | Out-Null
+    Run-PythonStart -PyPath $AgentScripts[$agent].Start | Out-Null
+	Write-Log "Waiting 20 seconds before consolidated check..."
+    Start-Sleep -Seconds 20
+}
+
+# --- Second consolidated check ---
+write-log "Agent Health check after first remediation"
+$afterFirstRem = Check-Agents -Agents $ExpectedAgents
+$stillDown1 = $afterFirstRem.DownAgents
+
+if ($stillDown1.Count -eq 0) {
+    # All agents UP after first remediation
+	$HostName = $env:COMPUTERNAME    
+	
+	
+    $BackupNote = "<p><b>Note:</b> Relevant agent log files were successfully backed up before remediation.</p>"
+
+    $BackupLink = ""
+
+    if ($LatestBackupPath) {
+
+        # Convert path to clickable file URL
+        $fileUrl = "file:///" + ($LatestBackupPath -replace "\\","/")
+
+        $BackupLink = @"
+<p>
+<b>Backup Folder:</b><br/>
+<a href='$fileUrl'>$LatestBackupPath</a>
+</p>
+"@
+    }
+
+    $FinalBody = $afterFirstRem.Html + $BackupNote + $BackupLink
+
+    Send-EmailHtml -Subject "INFO: All agents UP after first remediation on $HostName" -HtmlBody $FinalBody -Recipients $ToInitial
+    Write-Log "All agents UP after first remediation. Exiting."
+    exit 0
+}
+
+# --- Second remediation attempt (only still down agents) ---
+foreach ($agent in $stillDown1) {
+    Write-Log "Second remediation attempt for $agent"
+    Run-DbBatch -Path $AgentScripts[$agent].DB | Out-Null
+    Run-PythonStart -PyPath $AgentScripts[$agent].Start | Out-Null
+	Write-Log "Waiting 20 seconds before consolidated check..."
+    Start-Sleep -Seconds 20
+}
+
+# --- WAIT before 3rd check ---
+#Write-Log "Waiting 20 seconds before third consolidated check..."
+#Start-Sleep -Seconds 20
+
+# --- Third consolidated check ---
+$afterSecondRem = Check-Agents -Agents $ExpectedAgents
+$stillDown2 = $afterSecondRem.DownAgents
+
+# --- Consolidated reminders if still down ---
+if ($stillDown2.Count -gt 0) {
+    $remHtml = Build-HTMLReport -Title "CRITICAL: Some Agents STILL DOWN after 2 attempts" -Agents $ExpectedAgents -DownAgents $stillDown2
+    for ($i=1; $i -le $ReminderCount; $i++) {
+        Send-EmailHtml -Subject "REMINDER [$i/$ReminderCount]: Agents still DOWN on $HostName" -HtmlBody $remHtml -Recipients $ToEPPS
+        if ($i -lt $ReminderCount) { Start-Sleep -Seconds $ReminderIntervalSeconds }
+    }
+}
+
+Write-Log "Agent Health check finished."
+exit 0
+
+
+
+
 PS C:\Users\SA-ITS-APSOMAUT-NPD> \\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\Agent_db_restart_email_latest9.1.ps1
-At \\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher\bin\Automation\Agent\AWSDMJNVAW0002\Agent_db_restart_email_latest9.1.ps1:328 char:1
-+ }
-+ ~
-Unexpected token '}' in expression or statement.
-    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
-    + FullyQualifiedErrorId : UnexpectedToken
+[2026-03-06 11:12:08] Starting Agent Health check...
+[2026-03-06 11:12:08] Starting backup for agent: OMP_JNJ_MD_OMEGA_DEV2_utl
+[2026-03-06 11:12:08] Primary path found for OMP_JNJ_MD_OMEGA_DEV2_utl : \\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\omdata\development2\dispatcher\Agent
+[2026-03-06 11:12:08] Secondary path found for OMP_JNJ_MD_OMEGA_DEV2_utl : D:\OMClient\development2\user\SA-ITS-APSOMINT-DEV\dispatcher\Agent
+[2026-03-06 11:12:08] Created backup folder: D:\OMPdump\FRM_Backup\AWSDMJNVAW0002_20260306_111208
+[2026-03-06 11:12:08] Waiting 120 seconds before starting backup to allow path files to update...
+
