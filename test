@@ -1,2 +1,45 @@
-Name	PID	Status	User name	CPU	Memory (active private working set)	Command line	UAC virtualization
-ompeditor_06_09_024_x64u.exe	13684	Running	SA-ITS-APSOMINT-DEV	00 	172,096 K	"D:\OMClient\BIN\ompeditor_06_09_024_x64u\ompeditor_06_09_024_x64u.exe"  "/database={OMP_JNJ_MD_OMEGA_DEV2_utl@DNV91001}" "/AGENT" "/cuprof={OMP Dispatcher Agent}" "/CUApplication=DSP" "/PAK={\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMPInstallpoint\R06_09\ExeAndPakSource\Dispatcher_EDT_06_09A_008.pak,\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMPInstallpoint\R06_09\Solutions\LSS\last\06_09A_040\pak\LSS_UTL_DSP_06_09A_040.pak,\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMPInstallpoint\R06_09\Solutions\jnj_onemd\R06_26\06_26_016\pak\jnj_onemd_UTL_DSP_06_26_016.pak}" "/SET_FM_APPLICATIONDIR=\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\development2\dispatcher" "/LOGDIR=\\awsusdmjfsxn01.jnj.com\mdd_dev2_omp\OMP_JNJ_MD_OMEGA_DEV2\OMPartners\omdata\development2\dispatcher\Agent"  "/Invisible" %DSPRunArguments% "/Set_GPM_PARTITIONSTOSAVE=AWSDMJNVAW0002" 	Not allowed
+function Check-Agents {
+    param($Agents)
+
+    $cmdLines = wmic process where "name like '%ompeditor%'" get CommandLine /VALUE |
+        Select-String "^CommandLine=" | ForEach-Object {
+            $_.ToString().Replace("CommandLine=", "").Trim()
+        }
+
+    $down = @()
+
+    foreach ($a in $Agents) {
+
+        $matched = $false
+
+        foreach ($c in $cmdLines) {
+
+            if ($c -match [regex]::Escape($a)) {
+                $matched = $true
+                break
+            }
+
+        }
+
+        if (-not $matched) {
+            $down += $a
+        }
+
+    }
+
+    $html = Build-HTMLReport -Title "Agent Status Report" -Agents $Agents -DownAgents $down
+
+    return @{
+        DownAgents = $down
+        Html       = $html
+    }
+}
+
+
+
+
+
+
+$cmdLines = Get-CimInstance Win32_Process |
+            Where-Object { $_.CommandLine -like "*ompeditor*" } |
+            Select-Object -ExpandProperty CommandLine
